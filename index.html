@@ -1489,8 +1489,11 @@
   /* Mobile */
   @media (max-width: 767px) {
     .edu-flow { top: 4%; gap: 10px; }
-    .edu-flow .edu-callout.edu-left  { margin-left: 41%; }
-    .edu-flow .edu-callout.edu-right { margin-left: 7%; }
+    /* Hạ riêng cụm #1 (FPT) xuống để không bị thanh menu che, trong khi cụm #2
+       (quote) giữ nguyên vị trí — bù margin ngược nhau. Hai cụm lệch ngang nên
+       không đè chữ lên nhau. */
+    .edu-flow .edu-callout.edu-left  { margin-left: 41%; margin-top: 44px; }
+    .edu-flow .edu-callout.edu-right { margin-left: 7%; margin-top: -44px; }
   }
 
   /* ===== Cụm GỘP (1 line + toàn bộ nội dung): ẩn mặc định ===== */
