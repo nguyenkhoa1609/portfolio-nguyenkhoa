@@ -802,7 +802,9 @@
   }
   .block-b .btn-contact { display: inline-block; }
   @media (max-width: 1366px) {
-    .about-scroll { height: 190vh; }
+    /* Mobile: kéo dài quãng scroll của About để mỗi nhịp (nhất là nhịp 2)
+       có nhiều không gian hơn — 1 lần vuốt tay không lướt skip qua được */
+    .about-scroll { height: 280vh; }
     /* model đè lên trên các cụm text trong cả 3 nhịp */
     .about-avatar { z-index: 7; }
     /* chân model fade vào nền: lớp fade nằm trên model, kéo đậm sớm hơn để
@@ -1440,7 +1442,7 @@
     .hero { padding-top: 3.8rem; }
     .hero h1 { margin-top: 0; font-size: 14vw; }
     /* cụm model+card: canh giữa, nhích lên; chân card fade vào nền như bản PC */
-    .portrait { top: 56%; bottom: auto; width: min(72vw, 310px); }
+    .portrait { top: 56%; bottom: auto; width: min(90vw, 388px); }
     .portrait.fade { transform: translate(-50%, calc(-50% + var(--fy, 30px))); }
     .portrait.fade.in { transform: translate(-50%, -50%); }
     .p-grid { grid-template-columns: 1fr; }
@@ -1486,7 +1488,7 @@
   }
   /* Mobile */
   @media (max-width: 767px) {
-    .edu-flow { top: 8%; gap: 10px; }
+    .edu-flow { top: 4%; gap: 10px; }
     .edu-flow .edu-callout.edu-left  { margin-left: 41%; }
     .edu-flow .edu-callout.edu-right { margin-left: 7%; }
   }
@@ -1746,7 +1748,7 @@
     <h3 class="about-heading">Experience</h3>
     <div class="exp about-exp">
       <div class="exp-row">
-        <div><div class="exp-role">Designer — Design &amp; Media</div><div class="exp-org">Pixel Perfect</div></div>
+        <div><div class="exp-role">Graphic Designer — Design &amp; Media</div><div class="exp-org">Pixel Perfect</div></div>
         <div class="exp-time">07/2025 — 07/2026</div>
       </div>
       <div class="exp-row">
