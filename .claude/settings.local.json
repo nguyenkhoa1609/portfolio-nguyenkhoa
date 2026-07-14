@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git --version; gh --version; Write-Output \"---\"; Get-ChildItem -Recurse -File | Measure-Object -Property Length -Sum | Select-Object Count, @{n='MB';e={[math]::Round\\($_.Sum/1MB,2\\)}})",
+      "PowerShell(Get-ChildItem -Recurse -File | Where-Object { $_.Length -gt 50MB } | Select-Object @{n='MB';e={[math]::Round\\($_.Length/1MB,2\\)}}, FullName; Write-Output \"--- top dirs ---\"; Get-ChildItem -Directory | ForEach-Object { $s=\\(Get-ChildItem $_.FullName -Recurse -File | Measure-Object -Property Length -Sum\\).Sum; [PSCustomObject]@{Dir=$_.Name; MB=[math]::Round\\($s/1MB,2\\)} })",
+      "PowerShell(git init -b main)",
+      "PowerShell(git config user.email)",
+      "PowerShell(git config user.name)",
+      "PowerShell(git config user.email \"khoadesign169@gmail.com\")",
+      "PowerShell(git config user.name \"nguyenkhoa1609\")",
+      "PowerShell(git add -A)"
+    ]
+  }
+}

@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Creative Portfolio — Khoa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap&subset=vietnamese" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #010101; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Kanit', sans-serif;
+    color: #D7E2EA;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+  :root { --ink: #0C0C0C; --mist: #D7E2EA; }
+
+  .fade {
+    opacity: 0;
+    transform: translate(var(--fx, 0), var(--fy, 30px));
+    transition: opacity var(--fd, .7s) cubic-bezier(.25,.1,.25,1) var(--fdelay, 0s),
+                transform var(--fd, .7s) cubic-bezier(.25,.1,.25,1) var(--fdelay, 0s);
+    will-change: opacity, transform;
+  }
+  .fade.in { opacity: 1; transform: translate(0, 0); }
+
+  /* ---------- Fixed site nav (đồng bộ trang chính) ---------- */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background .35s ease, border-color .35s ease,
+                -webkit-backdrop-filter .35s ease, backdrop-filter .35s ease;
+  }
+  .site-nav.scrolled {
+    background: rgba(8, 8, 10, .42);
+    -webkit-backdrop-filter: blur(16px) saturate(1.25);
+    backdrop-filter: blur(16px) saturate(1.25);
+    border-bottom-color: rgba(255, 255, 255, .08);
+  }
+  .nav-logo { display: block; flex: none; }
+  .nav-logo svg { height: 30px; width: auto; display: block; }
+  .nav-links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: clamp(1.2rem, 3.5vw, 2.8rem);
+  }
+  .site-nav a {
+    color: var(--mist);
+    text-decoration: none;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .875rem;
+    transition: opacity .2s;
+  }
+  .nav-links a, .nav-contact {
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    padding: .4rem 1.05rem;
+    transition: border-color .35s ease, opacity .2s;
+  }
+  .site-nav a.current { border-color: rgba(215,226,234,.45); }
+  .site-nav a:hover { opacity: .7; }
+  .nav-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
+  .nav-contact svg { width: 1.05em; height: 1.05em; }
+  @media (min-width: 640px)  { .site-nav { padding: 1.1rem 2.5rem; } .site-nav a { font-size: 1rem; } .nav-logo svg { height: 34px; } }
+
+  /* ===== Mobile menu (burger) — tông grey ===== */
+  .nav-burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px; height: 40px;
+    padding: 8px;
+    margin-right: -8px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .nav-burger span {
+    display: block;
+    width: 100%; height: 2px;
+    border-radius: 2px;
+    background: #C9CDD1;
+    transition: transform .3s, opacity .3s;
+  }
+  .nav-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mm-backdrop {
+    position: fixed; inset: 0;
+    z-index: 190;
+    background: rgba(0,0,0,.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+  }
+  .mobile-menu {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    z-index: 200;
+    width: min(78vw, 340px);
+    background: #161616;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255,255,255,.07);
+    transform: translateX(100%);
+    transition: transform .4s cubic-bezier(.2,.8,.2,1);
+    display: flex;
+    flex-direction: column;
+    padding: 1.1rem 1.6rem 2rem;
+  }
+  body.mm-open .mobile-menu { transform: none; }
+  body.mm-open .mm-backdrop { opacity: 1; pointer-events: auto; }
+  .mm-close {
+    align-self: flex-end;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.16);
+    background: transparent;
+    color: #D9D9D9;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .mm-close svg { width: 16px; height: 16px; }
+  .mm-links {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2.2rem;
+  }
+  .mm-links a {
+    color: #D9D9D9;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-size: 1.05rem;
+    padding: 1.05rem 0;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .mm-links a:last-child { border-bottom: 0; }
+
+  @media (max-width: 767px) {
+    .nav-logo svg { height: 22px; }
+    .nav-links, .nav-contact { display: none; } /* mobile dùng menu burger */
+    .nav-burger { display: flex; }
+  }
+
+  /* ---------- Heading ---------- */
+  .works-head {
+    padding: clamp(8rem, 18vh, 12rem) 1.25rem 0;
+    text-align: center;
+  }
+  .works-title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .05em;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -.02em;
+    line-height: 1;
+    font-size: clamp(2.4rem, 7.5vw, 6.5rem);
+    background: linear-gradient(180deg, #E9F0F6 0%, #9AA7B4 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  /* chữ O thứ nhất của PORTFOLIO thay bằng viên nhộng + mũi tên (như mẫu) */
+
+  /* ---------- Filter tabs ---------- */
+  .works-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(1.1rem, 3vw, 2.6rem);
+    padding: clamp(2.2rem, 5.5vh, 3.6rem) 1.25rem clamp(2.4rem, 6vh, 4rem);
+  }
+  .works-filter button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 400;
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    color: rgba(215,226,234,.45);
+    transition: color .25s;
+    padding: .2rem 0;
+  }
+  .works-filter button:hover { color: rgba(215,226,234,.8); }
+  .works-filter button.on {
+    color: #fff;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+  }
+
+  /* ---------- Masonry grid (4 cột như mẫu) ---------- */
+  /* Masonry xếp NGANG: JS chia item lần lượt vào cột thấp nhất
+     → các ấn phẩm cùng nhóm nằm cạnh nhau theo hàng ngang */
+  .works-grid {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 0 14px 5rem;
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+  .works-col { flex: 1 1 0; min-width: 0; }
+
+  .work {
+    display: block;
+    break-inside: avoid;
+    margin: 0 0 14px;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    color: #fff;
+    isolation: isolate;
+    opacity: 1;
+    transform: none;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .work.hide { display: none; }
+  .work.entering { opacity: 0; transform: translateY(14px); }
+
+  /* media: ảnh thật thay vào .work-media (img/video), placeholder dùng gradient */
+  .work-media {
+    width: 100%;
+    display: block;
+    aspect-ratio: var(--ar, 1 / 1);
+    object-fit: cover;
+    background: var(--ph, linear-gradient(135deg, #2A2E36, #0C0C0C));
+    transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .work:hover .work-media { transform: scale(1.045); }
+
+  /* nhãn placeholder — xoá khi thay ảnh thật */
+  .ph-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    font-size: .72rem;
+    font-weight: 500;
+    color: rgba(255,255,255,.55);
+    pointer-events: none;
+  }
+
+  /* overlay khi hover: tên + hạng mục + nút mũi tên tròn */
+  .work-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.1rem 1.2rem;
+    background: linear-gradient(to top, rgba(0,0,0,.72), transparent 55%);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .work:hover .work-overlay { opacity: 1; }
+  .work-overlay .w-cat {
+    font-size: .65rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.65);
+  }
+  .work-overlay .w-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-top: .15rem;
+  }
+  .work-arrow {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(10,10,12,.75);
+    border: 1px solid rgba(255,255,255,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .work:hover .work-arrow { opacity: 1; transform: translateY(0); }
+  .work-arrow svg { width: 16px; height: 16px; color: #fff; }
+
+  .footer-note {
+    text-align: center;
+    padding: 0 1.25rem 2.5rem;
+    font-weight: 300;
+    font-size: .8rem;
+    opacity: .4;
+  }
+
+  /* =============== CONTACT (white footer — đồng bộ trang chính) =============== */
+  .contact {
+    background: #FFFFFF;
+    color: var(--ink);
+    margin-top: 5rem;
+    position: relative;
+    z-index: 20;
+    padding: 5rem 1.25rem 3rem;
+    text-align: center;
+  }
+  .contact h2 {
+    color: var(--ink);
+    margin-bottom: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: .95;
+    letter-spacing: -.02em;
+    font-size: clamp(3rem, 12vw, 160px);
+  }
+  .contact-sub {
+    font-weight: 300;
+    max-width: 34rem;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    font-size: clamp(.95rem, 1.8vw, 1.2rem);
+    opacity: .65;
+  }
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .75rem 1rem;
+    margin-bottom: 3rem;
+  }
+  .contact-links a {
+    color: var(--ink);
+    text-decoration: none;
+    border: 2px solid var(--ink);
+    border-radius: 9999px;
+    padding: .7rem 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    font-weight: 500;
+    font-size: .8rem;
+    transition: background .25s, color .25s;
+  }
+  .contact-links a:hover { background: var(--ink); color: #fff; }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .5rem;
+    margin-bottom: 2.5rem;
+  }
+  .tools span {
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: .45rem .9rem;
+    border-radius: 9999px;
+    background: rgba(12,12,12,.06);
+  }
+  .contact .footer-note {
+    padding: 0;
+    font-size: .72rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    opacity: .4;
+    font-weight: 500;
+  }
+
+  /* =============== LIGHTBOX — chi tiết ấn phẩm =============== */
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 3.5vw, 3.25rem);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s ease, visibility 0s linear .35s;
+  }
+  .lb.open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .35s ease;
+  }
+  .lb-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 3, 5, .68);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    backdrop-filter: blur(14px) saturate(1.1);
+    cursor: pointer;
+  }
+  .lb-close {
+    position: absolute;
+    top: clamp(.9rem, 2.5vw, 1.6rem);
+    right: clamp(.9rem, 2.5vw, 1.6rem);
+    z-index: 3;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: rgba(10,10,12,.75);
+    border: 1px solid rgba(255,255,255,.22);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .25s, transform .25s;
+  }
+  .lb-close:hover { background: rgba(255,255,255,.14); transform: rotate(90deg); }
+  .lb-close svg { width: 18px; height: 18px; }
+
+  .lb-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: clamp(1.4rem, 3.5vw, 3.2rem);
+    max-width: min(1440px, 100%);
+    max-height: 100%;
+    transform: translateY(22px) scale(.985);
+    transition: transform .45s cubic-bezier(.2,.8,.2,1);
+  }
+  .lb.open .lb-inner { transform: none; }
+
+  /* Khung media: tỉ lệ được JS gán vào --r (dạng số, vd 0.75 = 3:4) */
+  .lb-media {
+    position: relative;
+    flex: none;
+    aspect-ratio: var(--r, 1);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #101216;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+  }
+  .lb-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .8s ease;
+  }
+  .lb-slide.on { opacity: 1; }
+  .lb-slide img,
+  .lb-slide video,
+  .lb-slide .lb-ph {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* ảnh trong lightbox giữ nguyên tỉ lệ gốc, không cắt xén */
+  .lb-slide img { object-fit: contain; }
+  .lb-slide iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  /* cột media: ảnh + thanh trượt nằm DƯỚI chân ảnh (ngoài ảnh) */
+  .lb-media-col {
+    flex: none;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .9rem;
+  }
+  /* thanh trượt kiểu stage-bar (giống About / What I Do) */
+  .lb-dots {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 100%;
+    padding: 0 .5rem;
+  }
+  .lb-dots.show { display: flex; }
+  .lb-dots i {
+    display: block;
+    width: 26px; height: 2px;
+    border-radius: 2px;
+    background: rgba(255,255,255,.16);
+    cursor: pointer;
+    flex: none;
+    transition: background .3s;
+  }
+  .lb-dots i:hover { background: rgba(255,255,255,.45); }
+  .lb-dots i.on { background: #fff; }
+  @media (max-width: 768px) { .lb-dots i { width: 20px; } }
+
+  /* nút tới / lui trên media */
+  .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,10,12,.45);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .3s, background .3s;
+    backdrop-filter: blur(6px);
+  }
+  .lb-nav svg { width: 17px; height: 17px; }
+  .lb-nav.prev { left: .7rem; }
+  .lb-nav.next { right: .7rem; }
+  .lb-media:hover .lb-nav { opacity: 1; }
+  .lb-nav:hover { background: rgba(10,10,12,.75); }
+  @media (hover: none) { .lb-nav { opacity: .8; } }
+
+  /* nút bật / tắt âm thanh video */
+  .lb-sound {
+    position: absolute;
+    right: .8rem;
+    bottom: .8rem;
+    z-index: 3;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,10,12,.55);
+    color: #fff;
+    cursor: pointer;
+    transition: background .3s, transform .2s;
+    backdrop-filter: blur(6px);
+  }
+  .lb-sound:hover { background: rgba(10,10,12,.8); transform: scale(1.06); }
+  .lb-sound svg { width: 18px; height: 18px; }
+  .lb-sound .ico-on { display: none; }
+  .lb-sound.on .ico-on { display: block; }
+  .lb-sound.on .ico-off { display: none; }
+
+  .lb-text { min-width: 0; }
+  .lb-text .lb-cat {
+    display: block;
+    font-size: .7rem;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: rgba(215,226,234,.55);
+    margin-bottom: .6rem;
+  }
+  .lb-text h3 {
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  .lb-text p {
+    font-weight: 300;
+    font-size: clamp(.9rem, 1.4vw, 1rem);
+    line-height: 1.75;
+    color: rgba(215,226,234,.82);
+    margin-bottom: .9rem;
+  }
+
+  /* Ấn phẩm dọc / vuông (1:1, 3:4, 9:16): media TRÁI — text PHẢI */
+  .lb-inner.portrait { flex-direction: row; align-items: center; }
+  .lb-inner.portrait .lb-media { height: min(82vh, 940px); max-width: min(60vw, 100%); }
+  .lb-inner.portrait .lb-text {
+    flex: 1 1 auto;
+    max-width: 36rem;
+    max-height: 82vh;
+    overflow-y: auto;
+    padding-right: .5rem;
+    overscroll-behavior: contain;
+  }
+
+  /* Ấn phẩm ngang (16:9, 16:10...): media TRÊN — text DƯỚI */
+  .lb-inner.landscape {
+    flex-direction: column;
+    align-items: flex-start;
+    width: min(1080px, 100%);
+  }
+  .lb-inner.landscape .lb-media-col { width: 100%; }
+  .lb-inner.landscape .lb-media {
+    width: min(100%, calc(58vh * var(--r, 1.6)));
+    margin: 0 auto;
+  }
+  .lb-inner.landscape .lb-text {
+    width: 100%;
+    max-width: 46rem;
+    margin: 0 auto;
+    max-height: 26vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  @media (max-width: 760px) {
+    .lb { padding: 1rem; align-items: flex-start; }
+    .lb-inner,
+    .lb-inner.portrait,
+    .lb-inner.landscape {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .lb-inner.portrait .lb-media-col,
+    .lb-inner.landscape .lb-media-col { width: 100%; }
+    .lb-inner.portrait .lb-media,
+    .lb-inner.landscape .lb-media {
+      width: min(100%, calc(56vh * var(--r, 1)));
+      height: auto;
+      max-width: 100%;
+      margin: 2.6rem auto 0;
+    }
+    .lb-inner.portrait .lb-text,
+    .lb-inner.landscape .lb-text {
+      max-width: 100%;
+      max-height: none;
+      overflow: visible;
+      padding: 0 .25rem 2rem;
+    }
+  }
+
+  /* Website: text trước, ảnh full-width scroll xuống xem (kiểu Behance) */
+  .lb-inner.scrolly {
+    flex-direction: column;
+    width: min(1080px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding-right: .25rem;
+  }
+  .lb-inner.scrolly .lb-text {
+    order: -1;
+    width: 100%;
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: .4rem 0 1.8rem;
+  }
+  .lb-inner.scrolly .lb-media-col { width: 100%; gap: 0; }
+  .lb-inner.scrolly .lb-media {
+    aspect-ratio: auto;
+    width: 100%;
+    height: auto;
+    max-width: none;
+    box-shadow: none;
+    border-radius: 12px;
+  }
+  .lb-inner.scrolly .lb-media { overflow: visible; background: transparent; }
+  .lb-inner.scrolly .lb-slide {
+    position: static;
+    opacity: 1;
+    transition: none;
+  }
+  /* khoảng chuyển giao nhỏ giữa 2 ảnh web liền kề */
+  .lb-inner.scrolly .lb-slide + .lb-slide { margin-top: 16px; }
+  .lb-inner.scrolly .lb-slide img {
+    width: 100%;
+    height: auto;
+    object-fit: unset;
+    border-radius: 12px;
+  }
+  .lb-inner.scrolly .lb-dots { display: none !important; }
+  /* Branding: các trang nối liền lạc, bo góc cả khối */
+  .lb-inner.scrolly.seamless .lb-media {
+    overflow: hidden;
+    border-radius: 12px;
+    background: #101216;
+  }
+  .lb-inner.scrolly.seamless .lb-slide + .lb-slide { margin-top: 0; }
+  .lb-inner.scrolly.seamless .lb-slide img { border-radius: 0; }
+
+  body.lb-lock { overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade, .work, .work-media, .work-arrow,
+    .lb, .lb-inner, .lb-slide, .lb-close { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ FIXED SITE NAV ============ -->
+<nav class="site-nav fade" id="siteNav" style="--fy:-20px; --fdelay:0s">
+  <a class="nav-logo" href="index.html#top" aria-label="Khoa — home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 403.01 143.35">
+  <defs>
+    <linearGradient id="navLogoGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6F0F7" stop-opacity=".95"/><stop offset="1" stop-color="#9AA7B4" stop-opacity=".7"/></linearGradient>
+    <style>
+      .cls-nav {
+        fill: url(#navLogoGrad);
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <g>
+        <path class="cls-nav" d="M29.91,81.9c7.68,0,13.84,1.75,18.48,5.24,4.64,3.5,7.33,8.42,8.08,14.78l-17.19,1.72c-.34-2.58-1.25-4.5-2.71-5.76-1.46-1.26-3.74-1.89-6.83-1.89-4.3,0-7.43,1.52-9.41,4.56-1.98,3.04-2.96,7.28-2.96,12.72s1.07,9.68,3.22,12.72c2.15,3.04,5.23,4.55,9.24,4.55,3.61,0,6.3-.77,8.08-2.32,1.78-1.55,2.81-4.12,3.09-7.73h-15.3v-13.75h34.38v12.37c0,3.27.03,6.09.09,8.47.06,2.38.16,4.5.3,6.36.14,1.86.31,3.52.52,4.98.2,1.46.44,2.94.73,4.43h-17.19c-.11-.74-.23-1.65-.34-2.71-.12-1.06-.17-2.25-.17-3.57-.06-2.23.2-4.44.77-6.62.57-2.18,1.29-4.35,2.15-6.53l-2.58-.52c-.34,2.92-.83,5.66-1.46,8.21-.63,2.55-1.59,4.8-2.88,6.75-1.29,1.95-3.02,3.48-5.2,4.6-2.18,1.12-5.04,1.68-8.59,1.68-4.01,0-7.63-.72-10.87-2.15-3.24-1.43-6-3.49-8.29-6.19-2.29-2.69-4.04-5.97-5.24-9.84-1.2-3.87-1.8-8.26-1.8-13.19s.63-9.32,1.89-13.19c1.26-3.87,3.14-7.15,5.63-9.84,2.49-2.69,5.61-4.75,9.37-6.19,3.75-1.43,8.09-2.15,13.02-2.15Z"/>
+        <path class="cls-nav" d="M96.94,83.19c4.24,0,7.82.37,10.74,1.12,2.92.75,5.3,1.82,7.13,3.22,1.83,1.4,3.17,3.11,4,5.11.83,2.01,1.25,4.3,1.25,6.87s-.55,4.68-1.63,6.32c-1.09,1.63-2.49,2.92-4.21,3.87-1.72.95-3.65,1.59-5.8,1.93-2.15.34-4.25.52-6.32.52-1.09,0-2.18-.03-3.27-.09-1.09-.06-2.15-.14-3.18-.26v2.58c1.03-.06,2.02-.1,2.96-.13.95-.03,1.82-.04,2.62-.04,2.63,0,4.9.23,6.79.69,1.89.46,3.75,1.4,5.59,2.84,1.2.92,2.15,2.08,2.83,3.48.69,1.4,1.32,2.94,1.89,4.6.52,1.43.96,2.89,1.33,4.38.37,1.49.76,2.96,1.16,4.43.4,1.46.87,2.92,1.42,4.38.54,1.46,1.25,2.91,2.11,4.34h-17.62c-.8-1.2-1.42-2.39-1.85-3.57-.43-1.17-.8-2.36-1.12-3.57-.32-1.2-.6-2.45-.86-3.74-.26-1.29-.61-2.65-1.07-4.08-.4-1.2-.83-2.18-1.29-2.92-.46-.74-1.03-1.3-1.72-1.68-.69-.37-1.52-.63-2.49-.77-.97-.14-2.15-.21-3.52-.21h-7.91v20.54h-17.19v-60.16h29.22ZM95.13,108.03c2.58,0,4.48-.44,5.71-1.33,1.23-.89,1.85-2.13,1.85-3.74s-.61-2.76-1.85-3.65c-1.23-.89-3.14-1.33-5.71-1.33h-10.23v10.05h10.23Z"/>
+        <path class="cls-nav" d="M167.83,83.19l19.68,60.16h-17.7l-3.87-12.98h-18.22l-3.87,12.98h-17.7l19.68-60.16h22ZM161.48,115.42l-1.72-5.67c-.52-1.83-.93-3.58-1.25-5.24-.32-1.66-.53-3.34-.65-5.03-.11-1.69-.14-3.42-.09-5.2.06-1.78.17-3.67.34-5.67h-2.58c.34,4.07.41,7.76.21,11.09-.2,3.32-.82,6.67-1.85,10.05l-1.63,5.67h9.2Z"/>
+        <path class="cls-nav" d="M191.9,83.19h27.58c8.19,0,14.24,1.88,18.13,5.63,3.89,3.75,5.84,8.95,5.84,15.6s-1.95,11.85-5.84,15.6c-3.9,3.75-9.94,5.63-18.13,5.63h-10.4v17.7h-17.19v-60.16ZM218.19,110.69c3.04,0,5.11-.56,6.23-1.68,1.12-1.12,1.67-2.65,1.67-4.6s-.56-3.55-1.67-4.64c-1.12-1.09-3.19-1.63-6.23-1.63h-9.11v12.55h9.11Z"/>
+        <polygon class="cls-nav" points="360.99 71.91 401.57 1.29 357.51 1.29 334.76 45.93 328.61 45.93 306.27 1.29 262.2 1.29 293.74 56.46 302.58 71.91 305.87 77.68 334.98 77.68 334.98 98.12 358.95 143.35 403.01 143.35 360.99 71.91"/>
+        <path class="cls-nav" d="M248.61,83.19h17.19v22.6h21.83v-22.6h17.19v60.16h-17.19v-22.6h-21.83v22.6h-17.19v-60.16Z"/>
+        <path class="cls-nav" d="M311.86,83.19h17.19v60.16h-17.19v-60.16Z"/>
+      </g>
+      <g>
+        <path class="cls-nav" d="M29.56,31.2c2.18,0,3.98.17,5.41.52,1.43.34,2.68.9,3.74,1.68,1.06.77,2.03,1.79,2.92,3.05.89,1.26,1.85,2.81,2.88,4.64,1.14,1.95,2.15,3.74,3.01,5.37.86,1.63,1.72,3.22,2.58,4.77.86,1.55,1.76,3.14,2.71,4.77.95,1.63,2.11,3.45,3.48,5.46h-18.82c-1.66-2-3.07-4.43-4.21-7.26s-2.55-5.86-4.21-9.07c-.74-1.49-1.42-2.65-2.02-3.48-.6-.83-1.25-1.46-1.93-1.89-.69-.43-1.49-.69-2.41-.77-.92-.09-2.12-.13-3.61-.13h-1.89v22.6H0V1.29h17.19v22.6h.17c1.2,0,2.2-.03,3.01-.09.8-.06,1.5-.24,2.1-.56.6-.31,1.16-.77,1.68-1.37s1.09-1.45,1.72-2.54L36.18,1.29h18.82l-12.72,20.71c-.98,1.61-2.05,2.88-3.22,3.82-1.17.95-2.49,1.66-3.95,2.15-1.46.49-3.07.77-4.81.86-1.75.09-3.65.1-5.71.04v2.58c1.72-.17,3.38-.26,4.99-.26Z"/>
+        <path class="cls-nav" d="M60.58,1.29h17.19v22.6h21.83V1.29h17.19v60.16h-17.19v-22.6h-21.83v22.6h-17.19V1.29Z"/>
+        <path class="cls-nav" d="M122.28,31.37c0-4.93.69-9.32,2.06-13.19,1.37-3.87,3.38-7.15,6.01-9.84,2.64-2.69,5.86-4.75,9.67-6.19,3.81-1.43,8.12-2.15,12.93-2.15s9.12.72,12.93,2.15c3.81,1.43,7.03,3.5,9.67,6.19,2.64,2.69,4.64,5.97,6.02,9.84,1.37,3.87,2.06,8.26,2.06,13.19s-.69,9.32-2.06,13.19c-1.37,3.87-3.38,7.15-6.02,9.84-2.64,2.69-5.86,4.76-9.67,6.19-3.81,1.43-8.12,2.15-12.93,2.15s-9.12-.72-12.93-2.15c-3.81-1.43-7.03-3.49-9.67-6.19-2.64-2.69-4.64-5.97-6.01-9.84-1.37-3.87-2.06-8.26-2.06-13.19ZM139.64,31.37c0,5.21,1.16,9.25,3.48,12.12,2.32,2.86,5.6,4.3,9.84,4.3s7.52-1.43,9.84-4.3c2.32-2.86,3.48-6.9,3.48-12.12s-1.16-9.25-3.48-12.12c-2.32-2.86-5.6-4.3-9.84-4.3s-7.52,1.43-9.84,4.3c-2.32,2.86-3.48,6.9-3.48,12.12Z"/>
+        <path class="cls-nav" d="M224.72,1.29l19.68,60.16h-17.7l-3.87-12.98h-18.22l-3.87,12.98h-17.7L202.72,1.29h22ZM218.36,33.52l-1.72-5.67c-.52-1.83-.93-3.58-1.25-5.24-.32-1.66-.53-3.34-.65-5.03-.11-1.69-.14-3.42-.09-5.2.06-1.78.17-3.67.34-5.67h-2.58c.34,4.07.41,7.76.21,11.09-.2,3.32-.82,6.67-1.85,10.05l-1.63,5.67h9.2Z"/>
+      </g>
+    </g>
+  </g>
+</svg></a>
+  <div class="nav-links">
+    <a href="index.html#top">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#projects" id="navProjects" class="current">Projects</a>
+  </div>
+  <button class="nav-burger" id="navBurger" aria-label="Mở menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="nav-contact" href="#contact">Contact
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+  </a>
+</nav>
+
+<div class="mm-backdrop" id="mmBackdrop"></div>
+<aside class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <button class="mm-close" id="mmClose" aria-label="Đóng menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <nav class="mm-links">
+    <a href="index.html#top">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</aside>
+
+<!-- ============ HEADING ============ -->
+<header class="works-head">
+  <h1 class="works-title fade" style="--fy:34px">
+    <span>Creative</span>&nbsp;
+    <span>Portfolio</span>
+  </h1>
+</header>
+
+<!-- ============ FILTER ============ -->
+<div class="works-filter fade" style="--fy:24px; --fdelay:.12s" id="worksFilter">
+  <button class="on" data-filter="all">All</button>
+  <button data-filter="branding">Branding</button>
+  <button data-filter="website">Website</button>
+  <button data-filter="social">Social</button>
+  <button data-filter="motion">Motion</button>
+  <button data-filter="video-editing">Video Editing</button>
+  <button data-filter="led-visuals">LED Visuals</button>
+  <button data-filter="3d">3D</button>
+  <button data-filter="print">Print</button>
+  <button data-filter="others">Others</button>
+</div>
+
+<!-- ============ MASONRY GRID ============
+  Mỗi item (.work):
+  - data-cat: branding | website | social | motion | video-editing | led-visuals | 3d | print | others
+
+  MEDIA TRONG GRID (thumbnail):
+  - Ảnh:   <img class="work-media" src="works/branding/final.jpg" alt="" loading="lazy">
+  - Video: <video class="work-media" src="works/motion/reel.mp4" autoplay muted loop playsinline></video>
+    (video LUÔN tự chạy & loop — cả ở grid lẫn khi mở chi tiết; JS cũng tự ép muted/loop/autoplay)
+  - Giữ hoặc bỏ style --ar tuỳ tỉ lệ media thật; xoá <span class="ph-label"> khi thay media thật.
+
+  LIGHTBOX (click vào item sẽ mở chi tiết, KHÔNG chuyển trang):
+  - data-title: tên ấn phẩm hiện trong lightbox (mặc định lấy .w-name)
+  - data-desc:  nội dung chi tiết; xuống dòng trong attribute = tách đoạn <p>
+  - data-images="works/x/final.jpg|works/x/sketch.jpg"
+      → dành cho ấn phẩm có 2 ảnh (hoàn thiện + phát thảo).
+      Grid vẫn hiển thị ảnh hoàn thiện (thẻ img ở trên); khi mở lightbox
+      sẽ TỰ ĐỘNG chạy luân phiên qua các ảnh trong danh sách (theo thứ tự khai báo).
+  - data-lightbox="off": tắt lightbox cho item đó, click sẽ đi theo href như link thường
+    (dùng cho branding/website có trang trình bày riêng sau này).
+-->
+<main class="works-grid" id="worksGrid">
+
+<!-- BRANDING -->
+  <a class="work" href="#" data-cat="branding"
+     data-title="Logo Guideline"
+     data-desc="A refined visual identity for Vieproxy, built around simplicity and flexibility across every touchpoint. The mark reflects speed and connectivity, expressing a modern, trustworthy brand character."
+     data-flow="deck"
+     data-images="works/branding/brand-2-logo-top/brand2-final-page-01.webp|works/branding/brand-2-logo-top/brand2-final-page-02.webp|works/branding/brand-2-logo-top/brand2-final-page-03.webp|works/branding/brand-2-logo-top/brand2-final-page-04.webp|works/branding/brand-2-logo-top/brand2-final-page-05.webp|works/branding/brand-2-logo-top/brand2-final-page-06.webp|works/branding/brand-2-logo-top/brand2-final-page-07.webp|works/branding/brand-2-logo-top/brand2-final-page-08.webp|works/branding/brand-2-logo-top/brand2-final-page-09.webp|works/branding/brand-2-logo-top/brand2-final-page-10.webp|works/branding/brand-2-logo-top/brand2-final-page-11.webp|works/branding/brand-2-logo-top/brand2-final-page-12.webp">
+    <img class="work-media" src="works/branding/brand-2-logo-top/brand2-final-page-01.webp" alt="Branding — Logo Guideline" loading="lazy" style="--ar: 1600/900">
+    <div class="work-overlay"><span class="w-cat">Branding</span><span class="w-name">Logo Guideline</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="branding"
+     data-title="Logo Guideline"
+     data-desc="A refined visual identity for Byprofit, built around simplicity and flexibility across every touchpoint. The mark reflects growth and precision, expressing a professional, forward-thinking brand character."
+     data-flow="deck"
+     data-images="works/branding/brand-4-logo-top/brand4-final-page-01.webp|works/branding/brand-4-logo-top/brand4-final-page-02.webp|works/branding/brand-4-logo-top/brand4-final-page-03.webp|works/branding/brand-4-logo-top/brand4-final-page-04.webp|works/branding/brand-4-logo-top/brand4-final-page-05.webp|works/branding/brand-4-logo-top/brand4-final-page-06.webp|works/branding/brand-4-logo-top/brand4-final-page-07.webp|works/branding/brand-4-logo-top/brand4-final-page-08.webp|works/branding/brand-4-logo-top/brand4-final-page-09.webp|works/branding/brand-4-logo-top/brand4-final-page-10.webp|works/branding/brand-4-logo-top/brand4-final-page-11.webp">
+    <img class="work-media" src="works/branding/brand-4-logo-top/brand4-final-page-01.webp" alt="Branding — Logo Guideline" loading="lazy" style="--ar: 1600/900">
+    <div class="work-overlay"><span class="w-cat">Branding</span><span class="w-name">Logo Guideline</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="branding"
+     data-title="Logo Guideline"
+     data-desc="A refined visual identity for Soaplite, built around simplicity and flexibility across every touchpoint. The mark reflects lightness and purity, expressing a clean, approachable brand character."
+     data-flow="deck"
+     data-images="works/branding/brand-1-logo/brand1-final-page-01.webp|works/branding/brand-1-logo/brand1-final-page-02.webp|works/branding/brand-1-logo/brand1-final-page-03.webp|works/branding/brand-1-logo/brand1-final-page-04.webp|works/branding/brand-1-logo/brand1-final-page-05.webp|works/branding/brand-1-logo/brand1-final-page-06.webp|works/branding/brand-1-logo/brand1-final-page-07.webp|works/branding/brand-1-logo/brand1-final-page-08.webp|works/branding/brand-1-logo/brand1-final-page-09.webp|works/branding/brand-1-logo/brand1-final-page-10.webp|works/branding/brand-1-logo/brand1-final-page-11.webp|works/branding/brand-1-logo/brand1-final-page-12.webp">
+    <img class="work-media" src="works/branding/brand-1-logo/brand1-final-page-01.webp" alt="Branding — Logo Guideline" loading="lazy" style="--ar: 1600/900">
+    <div class="work-overlay"><span class="w-cat">Branding</span><span class="w-name">Logo Guideline</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="branding"
+     data-title="Rebranding"
+     data-seamless="off"
+     data-desc="A complete rebranding and brand-guidelines system for the 9proxy brand, covering logo, color, typography, brand pattern, iconography, imagery, and real-world applications. The result is a cohesive, modern identity built to stay consistent across every touchpoint."
+     data-flow="deck"
+     data-images="works/branding/brand-7-rebranding/brand7-final-page-01.webp|works/branding/brand-7-rebranding/brand7-final-page-02.webp|works/branding/brand-7-rebranding/brand7-final-page-03.webp|works/branding/brand-7-rebranding/brand7-final-page-04.webp|works/branding/brand-7-rebranding/brand7-final-page-05.webp|works/branding/brand-7-rebranding/brand7-final-page-06.webp|works/branding/brand-7-rebranding/brand7-final-page-07.webp|works/branding/brand-7-rebranding/brand7-final-page-08.webp|works/branding/brand-7-rebranding/brand7-final-page-09.webp|works/branding/brand-7-rebranding/brand7-final-page-10.webp|works/branding/brand-7-rebranding/brand7-final-page-11.webp|works/branding/brand-7-rebranding/brand7-final-page-12.webp|works/branding/brand-7-rebranding/brand7-final-page-13.webp|works/branding/brand-7-rebranding/brand7-final-page-14.webp|works/branding/brand-7-rebranding/brand7-final-page-15.webp|works/branding/brand-7-rebranding/brand7-final-page-16.webp|works/branding/brand-7-rebranding/brand7-final-page-17.webp|works/branding/brand-7-rebranding/brand7-final-page-18.webp|works/branding/brand-7-rebranding/brand7-final-page-19.webp|works/branding/brand-7-rebranding/brand7-final-page-20.webp|works/branding/brand-7-rebranding/brand7-final-page-21.webp|works/branding/brand-7-rebranding/brand7-final-page-22.webp|works/branding/brand-7-rebranding/brand7-final-page-23.webp|works/branding/brand-7-rebranding/brand7-final-page-24.webp|works/branding/brand-7-rebranding/brand7-final-page-25.webp|works/branding/brand-7-rebranding/brand7-final-page-26.webp|works/branding/brand-7-rebranding/brand7-final-page-27.webp|works/branding/brand-7-rebranding/brand7-final-page-28.webp|works/branding/brand-7-rebranding/brand7-final-page-29.webp|works/branding/brand-7-rebranding/brand7-final-page-30.webp|works/branding/brand-7-rebranding/brand7-final-page-31.webp|works/branding/brand-7-rebranding/brand7-final-page-32.webp|works/branding/brand-7-rebranding/brand7-final-page-33.webp|works/branding/brand-7-rebranding/brand7-final-page-34.webp|works/branding/brand-7-rebranding/brand7-final-page-35.webp|works/branding/brand-7-rebranding/brand7-final-page-36.webp|works/branding/brand-7-rebranding/brand7-final-page-37.webp|works/branding/brand-7-rebranding/brand7-final-page-38.webp|works/branding/brand-7-rebranding/brand7-final-page-39.webp|works/branding/brand-7-rebranding/brand7-final-page-40.webp|works/branding/brand-7-rebranding/brand7-final-page-41.webp|works/branding/brand-7-rebranding/brand7-final-page-42.webp|works/branding/brand-7-rebranding/brand7-final-page-43.webp|works/branding/brand-7-rebranding/brand7-final-page-44.webp|works/branding/brand-7-rebranding/brand7-final-page-45.webp|works/branding/brand-7-rebranding/brand7-final-page-46.webp|works/branding/brand-7-rebranding/brand7-final-page-47.webp|works/branding/brand-7-rebranding/brand7-final-page-48.webp|works/branding/brand-7-rebranding/brand7-final-page-49.webp|works/branding/brand-7-rebranding/brand7-final-page-50.webp|works/branding/brand-7-rebranding/brand7-final-page-51.webp|works/branding/brand-7-rebranding/brand7-final-page-52.webp">
+    <img class="work-media" src="works/branding/brand-7-rebranding/brand7-final-page-01.webp" alt="Branding — Rebranding" loading="lazy" style="--ar: 1600/900">
+    <div class="work-overlay"><span class="w-cat">Branding</span><span class="w-name">Rebranding</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="branding"
+     data-title="Logo &amp; Identity"
+     data-desc="This was a learning project I participated in. The Van Khoi logo was designed based on the idea of a bird's wing and the sun, carrying many meanings for the brand. The logo is stylized, combining symbols in a sophisticated and modern way."
+     data-flow="deck"
+     data-images="works/branding/brand-5-brandidentity/brand5-final-page-01.webp|works/branding/brand-5-brandidentity/brand5-final-page-02.webp|works/branding/brand-5-brandidentity/brand5-final-page-03.webp|works/branding/brand-5-brandidentity/brand5-final-page-04.webp|works/branding/brand-5-brandidentity/brand5-final-page-05.webp|works/branding/brand-5-brandidentity/brand5-final-page-06.webp|works/branding/brand-5-brandidentity/brand5-final-page-07.webp|works/branding/brand-5-brandidentity/brand5-final-page-08.webp">
+    <img class="work-media" src="works/branding/brand-5-brandidentity/brand5-final-page-01.webp" alt="Branding — Brand Identity" loading="lazy" style="--ar: 1600/1067">
+    <div class="work-overlay"><span class="w-cat">Branding</span><span class="w-name">Logo &amp; Identity</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="branding"
+     data-title="Rebranding"
+     data-seamless="off"
+     data-desc="This is a rebranding project I completed for my former company. For this project, the logo was already there; I redesigned it, repositioned the brand, and created a complete brand identity."
+     data-flow="deck"
+     data-images="works/branding/brand-6-brandidentity/brand6-final-page-01.webp|works/branding/brand-6-brandidentity/brand6-final-page-02.webp|works/branding/brand-6-brandidentity/brand6-final-page-03.webp|works/branding/brand-6-brandidentity/brand6-final-page-04.webp|works/branding/brand-6-brandidentity/brand6-final-page-05.webp|works/branding/brand-6-brandidentity/brand6-final-page-06.webp|works/branding/brand-6-brandidentity/brand6-final-page-07.webp|works/branding/brand-6-brandidentity/brand6-final-page-08.webp|works/branding/brand-6-brandidentity/brand6-final-page-09.webp|works/branding/brand-6-brandidentity/brand6-final-page-10.webp|works/branding/brand-6-brandidentity/brand6-final-page-11.webp|works/branding/brand-6-brandidentity/brand6-final-page-12.webp|works/branding/brand-6-brandidentity/brand6-final-page-13.webp|works/branding/brand-6-brandidentity/brand6-final-page-14.webp|works/branding/brand-6-brandidentity/brand6-final-page-15.webp|works/branding/brand-6-brandidentity/brand6-final-page-16.webp|works/branding/brand-6-brandidentity/brand6-final-page-17.webp|works/branding/brand-6-brandidentity/brand6-final-page-18.webp|works/branding/brand-6-brandidentity/brand6-final-page-19.webp|works/branding/brand-6-brandidentity/brand6-final-page-20.webp|works/branding/brand-6-brandidentity/brand6-final-page-21.webp|works/branding/brand-6-brandidentity/brand6-final-page-22.webp|works/branding/brand-6-brandidentity/brand6-final-page-23.webp|works/branding/brand-6-brandidentity/brand6-final-page-24.webp|works/branding/brand-6-brandidentity/brand6-final-page-25.webp|works/branding/brand-6-brandidentity/brand6-final-page-26.webp|works/branding/brand-6-brandidentity/brand6-final-page-27.webp|works/branding/brand-6-brandidentity/brand6-final-page-28.webp|works/branding/brand-6-brandidentity/brand6-final-page-29.webp|works/branding/brand-6-brandidentity/brand6-final-page-30.webp|works/branding/brand-6-brandidentity/brand6-final-page-31.webp|works/branding/brand-6-brandidentity/brand6-final-page-32.webp|works/branding/brand-6-brandidentity/brand6-final-page-33.webp|works/branding/brand-6-brandidentity/brand6-final-page-34.webp|works/branding/brand-6-brandidentity/brand6-final-page-35.webp|works/branding/brand-6-brandidentity/brand6-final-page-36.webp|works/branding/brand-6-brandidentity/brand6-final-page-37.webp|works/branding/brand-6-brandidentity/brand6-final-page-38.webp">
+    <img class="work-media" src="works/branding/brand-6-brandidentity/brand6-final-page-01.webp" alt="Branding — Brand Identity" loading="lazy" style="--ar: 1600/900">
+    <div class="work-overlay"><span class="w-cat">Branding</span><span class="w-name">Rebranding</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- WEBSITE -->
+  <a class="work" href="#" data-cat="website"
+     data-images="works/website/web-1/web1-1.webp|works/website/web-1/web1-2.webp|works/website/web-1/web1-3.webp|works/website/web-1/web1-4.webp"
+     data-desc="A responsive website design with a clean, structured layout that leads visitors naturally from the hero section to the call to action. Generous spacing and a clear type hierarchy keep the experience calm, modern, and easy to navigate.">
+    <img class="work-media" src="works/website/web-1/web1-1.webp" alt="Website — Website" loading="lazy" style="--ar: 4/5; object-position: top">
+    <div class="work-overlay"><span class="w-cat">Website</span><span class="w-name">Website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="website"
+     data-images="works/website/web-2/web2-1.webp|works/website/web-2/web2-2.webp|works/website/web-2/web2-3.webp|works/website/web-2/web2-4.webp"
+     data-desc="A website interface built around a bold hero and a scroll that reveals content in a logical rhythm. Confident headlines and organized sections mean users always know where to look next.">
+    <img class="work-media" src="works/website/web-2/web2-1.webp" alt="Website — Website" loading="lazy" style="--ar: 4/5; object-position: top">
+    <div class="work-overlay"><span class="w-cat">Website</span><span class="w-name">Website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="website"
+     data-images="works/website/web-3/web3-1.webp|works/website/web-3/web3-2.webp|works/website/web-3/web3-3.webp|works/website/web-3/web3-4.webp|works/website/web-3/web3-5.webp|works/website/web-3/web3-6.webp|works/website/web-3/web3-7.webp|works/website/web-3/web3-8.webp|works/website/web-3/web3-9.webp|works/website/web-3/web3-10.webp|works/website/web-3/web3-11.webp|works/website/web-3/web3-12.webp"
+     data-desc="A content-rich website design that turns a large amount of information into an easy, scannable journey. Consistent components, clear buttons, and a balanced grid keep everything readable across desktop and mobile.">
+    <img class="work-media" src="works/website/web-3/web3-1.webp" alt="Website — Website" loading="lazy" style="--ar: 4/5; object-position: top">
+    <div class="work-overlay"><span class="w-cat">Website</span><span class="w-name">Website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="website"
+     data-images="works/website/web-4/web4-1.webp|works/website/web-4/web4-2.webp|works/website/web-4/web4-3.webp|works/website/web-4/web4-4.webp|works/website/web-4/web4-5.webp|works/website/web-4/web4-6.webp|works/website/web-4/web4-7.webp|works/website/web-4/web4-8.webp|works/website/web-4/web4-9.webp|works/website/web-4/web4-10.webp|works/website/web-4/web4-11.webp"
+     data-desc="A conversion-focused website layout where product highlights and trust signals guide the user toward action. Clean visuals and a steady flow make browsing feel effortless from top to bottom.">
+    <img class="work-media" src="works/website/web-4/web4-1.webp" alt="Website — Website" loading="lazy" style="--ar: 4/5; object-position: top">
+    <div class="work-overlay"><span class="w-cat">Website</span><span class="w-name">Website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- SOCIAL -->
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-2-ecom-top/post2-final.webp|works/social/post-2-ecom-top/post2-demo.webp"
+     data-desc="A promotional e-commerce post built to stop the scroll, with a bold price callout and product hero taking center stage. High-contrast color and punchy type push the offer front and center.">
+    <img class="work-media" src="works/social/post-2-ecom-top/post2-final.webp" alt="Social — E-commerce" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">E-commerce</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An e-commerce sale visual designed around urgency and clarity, where discounts and deadlines read instantly. The composition frames the product cleanly while keeping the message loud.">
+    <img class="work-media" src="works/social/post-4-ecom-top/post4-final.webp" alt="Social — E-commerce" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">E-commerce</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A launch-style e-commerce post that pairs a clean backdrop with a confident, benefit-driven headline. Badges and accents reinforce the deal while the product stays the hero.">
+    <img class="work-media" src="works/social/post-5-ecom-top/post5-final.webp" alt="Social — E-commerce" loading="lazy" style="--ar: 1080/1080">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">E-commerce</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A feed-ready e-commerce banner that balances a lifestyle mood with a strong shopping call to action. Warm accents and organized text blocks make the offer feel appealing and trustworthy.">
+    <img class="work-media" src="works/social/post-16-ecom/post16-final.webp" alt="Social — E-commerce" loading="lazy" style="--ar: 1354/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">E-commerce</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-1-fb-top/post1-final.webp|works/social/post-1-fb-top/post1-demo.webp"
+     data-desc="A food and beverage post styled to trigger appetite at first glance, with rich, close-up imagery and warm, inviting tones. The type stays playful yet clear so the promotion is easy to read.">
+    <img class="work-media" src="works/social/post-1-fb-top/post1-final.webp" alt="Social — F&amp;B" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">F&amp;B</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-3-fb-top/post3-final.webp|works/social/post-3-fb-top/post3-demo.webp"
+     data-desc="An F&amp;B promotional visual that pairs mouth-watering imagery with a clean, cheerful layout. Bright accents and a friendly tone give the post an energetic, shareable feel.">
+    <img class="work-media" src="works/social/post-3-fb-top/post3-final.webp" alt="Social — F&amp;B" loading="lazy" style="--ar: 1536/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">F&amp;B</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A seasonal social post designed to match the mood of the occasion, with festive accents and a clear focal message. The look stays lively and on-brand across the feed.">
+    <img class="work-media" src="works/social/post-9-le-top/post9-final.webp" alt="Social — Seasonal & Occasion Posts" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Seasonal &amp; Occasion Posts</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post26-le-top/post26-1.webp|works/social/post26-le-top/post26-2.webp"
+     data-desc="An occasion-themed post built for instant impact, where the greeting or key date reads clearly against a celebratory backdrop. Excitement stays high without losing clarity.">
+    <img class="work-media" src="works/social/post26-le-top/post26-1.webp" alt="Social — Seasonal & Occasion Posts" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Seasonal &amp; Occasion Posts</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A seasonal campaign visual that blends expressive imagery with a clean information block. It feels timely, warm, and easy to engage with.">
+    <img class="work-media" src="works/social/post27-le-top/post27-final.webp" alt="Social — Seasonal & Occasion Posts" loading="lazy" style="--ar: 1536/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Seasonal &amp; Occasion Posts</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A festive occasion post that uses color and rhythm to capture the moment. Key details are framed clearly so the message lands right away.">
+    <img class="work-media" src="works/social/post28-le-top/post28-final.webp" alt="Social — Seasonal & Occasion Posts" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Seasonal &amp; Occasion Posts</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A seasonal social visual with a warm, celebratory tone and a balanced layout. Typography and imagery work together to keep the brand feeling current and inviting.">
+    <img class="work-media" src="works/social/post-15-le/post15-final.webp" alt="Social — Seasonal & Occasion Posts" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Seasonal &amp; Occasion Posts</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A beauty post with a soft, elegant palette that lets the product feel premium and gentle. Delicate typography and airy spacing create a calm, confident mood.">
+    <img class="work-media" src="works/social/post-25-beauty-top/post25-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1079/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A skincare-style visual built around freshness and clarity, using clean composition to spotlight results. Pastel tones and refined type give it a caring, trustworthy feel.">
+    <img class="work-media" src="works/social/post77-beauty-top/post77-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A beauty promotion that pairs a graceful layout with a clear benefit message. Muted colors and subtle accents keep the look luxurious yet approachable.">
+    <img class="work-media" src="works/social/post78-beauty-top/post78-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A cosmetics post styled for elegance, where the product sits within a clean, uncluttered frame. Soft lighting cues and gentle typography convey quality and self-care.">
+    <img class="work-media" src="works/social/post79-beauty-top/post79-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A beauty campaign visual with a dreamy, floral touch that feels warm and feminine. The composition balances imagery and text so the message stays clear and inviting.">
+    <img class="work-media" src="works/social/post80-beauty-top/post80-beauty.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A skincare post that leads with a confident headline and a soft, radiant backdrop. Clean lines and delicate accents give it a fresh, premium character.">
+    <img class="work-media" src="works/social/post81-beauty-top/post81-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1440/720">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A beauty visual designed to feel calm and reassuring, using breathing room and soft contrast. The product stays the hero while the tone remains elegant and modern.">
+    <img class="work-media" src="works/social/post82-beauty-top/post82-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1440/720">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A cosmetics promotion built around a polished, editorial look. A refined type pairing and a restrained palette make the offer feel high-end.">
+    <img class="work-media" src="works/social/post83-beauty-top/post83-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 900/600">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A beauty post with a glowing, feel-good atmosphere and a clear, benefit-led message. Warm neutrals and clean framing keep it attractive and readable.">
+    <img class="work-media" src="works/social/post84-beauty-top/post84-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 900/600">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A skincare-focused visual that turns product benefits into a clean, easy-to-follow layout. Soft colors and gentle accents reinforce a sense of trust and care.">
+    <img class="work-media" src="works/social/post85-beauty-top/post85-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 900/600">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-6-beauty/post6-final.webp|works/social/post-6-beauty/post6-demo.webp"
+     data-desc="A beauty banner styled for a wide format, balancing a lifestyle mood with a crisp call to action. The design stays elegant while making the promotion clear.">
+    <img class="work-media" src="works/social/post-6-beauty/post6-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A cosmetics visual with a bright, confident tone that celebrates the product. Clean typography and a tidy composition keep the message sharp on the feed.">
+    <img class="work-media" src="works/social/post-7-beauty/post7-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1536/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A beauty campaign post with a refined, minimal aesthetic that puts the spotlight on the product. Subtle detailing and soft contrast give it a premium finish.">
+    <img class="work-media" src="works/social/post-11-beauty/post11-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A skincare promotion that blends a warm, natural palette with a clear, structured message. The overall feel is gentle, modern, and reassuring.">
+    <img class="work-media" src="works/social/post-13-beauty/post13-final.webp" alt="Social — Beauty & Personal Care" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Beauty &amp; Personal Care</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A water filtration post built around freshness and trust, using cool blue tones and clean composition. Clear messaging highlights safety and reliability at a glance.">
+    <img class="work-media" src="works/social/post-22-locnuoc-top/post22-final.webp" alt="Social — Water Purifier" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Water Purifier</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-12-locnuoc/post12-1.webp|works/social/post-12-locnuoc/post12-2.webp|works/social/post-12-locnuoc/post12-3.webp|works/social/post-12-locnuoc/post12-4.webp|works/social/post-12-locnuoc/post12-5.webp"
+     data-desc="A product visual for a water purifier that emphasizes clarity and health, with crisp imagery and a tidy layout. The design feels clean, reassuring, and easy to read.">
+    <img class="work-media" src="works/social/post-12-locnuoc/post12-1.webp" alt="Social — Water Purifier" loading="lazy" style="--ar: 1280/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Water Purifier</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A water filtration promotion that turns technical benefits into a simple, confident message. Fresh accents and structured text keep the post approachable and trustworthy.">
+    <img class="work-media" src="works/social/post-14-locnuoc/post14-final.webp" alt="Social — Water Purifier" loading="lazy" style="--ar: 1920/1008">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Water Purifier</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-21-locnuoc/post21-1.webp|works/social/post-21-locnuoc/post21-2.webp"
+     data-desc="A clean, functional water-purifier visual where the product and its benefits sit clearly in focus. Cool tones and balanced spacing reinforce a sense of purity and safety.">
+    <img class="work-media" src="works/social/post-21-locnuoc/post21-1.webp" alt="Social — Water Purifier" loading="lazy" style="--ar: 1080/595">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Water Purifier</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A real estate post styled to feel premium and dependable, with structured layouts and confident typography. Property highlights and offers sit in a clear, professional frame.">
+    <img class="work-media" src="works/social/post-20-bds/post20-final.webp" alt="Social — Real Estate" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Real Estate</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post-23-bds/post23-1.webp|works/social/post-23-bds/post23-2.webp|works/social/post-23-bds/post23-3.webp|works/social/post-23-bds/post23-4.webp"
+     data-desc="A property promotion that balances an aspirational visual with organized, easy-to-read details. The design conveys trust while keeping key information front and center.">
+    <img class="work-media" src="works/social/post-23-bds/post23-1.webp" alt="Social — Real Estate" loading="lazy" style="--ar: 1080/1350">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Real Estate</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A real estate visual built around a clean, upscale look, where imagery and text share a calm, ordered composition. The result feels credible, modern, and inviting.">
+    <img class="work-media" src="works/social/post-24-bds/post24-final.webp" alt="Social — Real Estate" loading="lazy" style="--ar: 1536/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">Real Estate</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A social post for ABIC, styled with a warm, trustworthy tone that suits its community and agricultural audience. Clean layout and clear messaging keep the information approachable.">
+    <img class="work-media" src="works/social/post-10-agri/post10-final.webp" alt="Social — ABIC" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">ABIC</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An ABIC brand visual that pairs a friendly, natural feel with a structured, easy-to-read layout. The design stays clear while feeling dependable.">
+    <img class="work-media" src="works/social/post-17-agri/post17-final.webp" alt="Social — ABIC" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">ABIC</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A social post for ABIC built around clarity and trust, using clean composition and confident typography. Key details stay front and center for its audience.">
+    <img class="work-media" src="works/social/post-18-agri/post18-final.webp" alt="Social — ABIC" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">ABIC</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An ABIC campaign visual with a bright, approachable look and a tidy information block. The tone stays warm and reliable while the message reads instantly.">
+    <img class="work-media" src="works/social/post-19-agri/post19-final.webp" alt="Social — ABIC" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">ABIC</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy social post with a clean, tech-forward look that keeps the message sharp and modern. Bold accents guide attention straight to the key feature.">
+    <img class="work-media" src="works/social/post33-9proxypre/post34-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 776/948">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy visual built around clarity and confidence, pairing a strong headline with a tidy layout. The design feels fast and reliable.">
+    <img class="work-media" src="works/social/post37-9proxypre/post37-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A tech-driven 9Proxy post where a single benefit takes the spotlight against a modern backdrop. Clean structure keeps it easy to read.">
+    <img class="work-media" src="works/social/post38-9proxypre/post39-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy post styled for the feed, balancing a sleek palette with a clear, action-oriented message. The tone stays professional and current.">
+    <img class="work-media" src="works/social/post39-9proxypre/post39-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy brand visual that turns a product strength into a crisp, confident statement. Accents and contrast keep the focus tight.">
+    <img class="work-media" src="works/social/post40-9proxypre/post40-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-images="works/social/post43-9proxypre/post43-1.webp|works/social/post43-9proxypre/post43-2.webp"
+     data-desc="A modern 9Proxy post with a tech-forward mood and a clean, organized composition. The message reads instantly and feels dependable.">
+    <img class="work-media" src="works/social/post43-9proxypre/post43-1.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy social post built around a bold claim and a minimal layout. The design keeps the brand feeling sharp and trustworthy.">
+    <img class="work-media" src="works/social/post44-9proxypre/post44-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy visual with a sleek, dark palette and glowing accents that signal speed and reliability. The key message stays clear and direct.">
+    <img class="work-media" src="works/social/post45-9proxypre/post45-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A tech-styled 9Proxy post where a confident headline meets a modern, gradient-driven backdrop. Strong contrast makes the value easy to grasp.">
+    <img class="work-media" src="works/social/post47-9proxypre/post47-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy post with a minimal, focused layout that lets the main feature stand out. Sharp typography keeps it clean and readable.">
+    <img class="work-media" src="works/social/post53-9proxypre/post53-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy brand visual built for impact, pairing a bold statement with a tidy, tech-forward composition. The message lands at a glance.">
+    <img class="work-media" src="works/social/post54-9proxypre/post54-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy social post that frames a feature with cool tones and precise structure. Accents guide the eye straight to the offer.">
+    <img class="work-media" src="works/social/post58-9proxypre/post58-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1176/786">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A modern 9Proxy visual where clean lines and a bold focal point drive the message home. The look feels fast, reliable, and professional.">
+    <img class="work-media" src="works/social/post60-9proxypre/post60-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 776/948">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy post styled around trust and speed, using confident typography and a sleek backdrop. The layout stays organized and clear.">
+    <img class="work-media" src="works/social/post67-9proxypre/post67-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1176/784">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A tech-forward 9Proxy visual with a futuristic mood, where subtle glow meets a tidy grid. The message reads clearly and confidently.">
+    <img class="work-media" src="works/social/post68-9proxypre/post68-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy post built around a single, sharp claim and a minimal, modern layout. Clean contrast keeps it easy to scan.">
+    <img class="work-media" src="works/social/post76-9proxypre/post76-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy social post with a bold, tech-forward layout that keeps the message crisp and modern. Clean contrast and confident typography guide attention straight to the key point.">
+    <img class="work-media" src="works/social/post86-9proxypre/post86-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1572/936">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event post built to spark excitement, with dynamic accents and a bold headline announcing the moment. Key dates and offers are framed to grab attention fast.">
+    <img class="work-media" src="works/social/post62-9proxyevent3-top/post62-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event promotion for 9Proxy styled with energetic color and motion cues. The design drives participation while keeping the details clear.">
+    <img class="work-media" src="works/social/post63-9proxyevent3-top/post63-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A hype-driven event visual where a strong callout meets a vibrant, tech-forward backdrop. The message pushes users to join in without losing readability.">
+    <img class="work-media" src="works/social/post64-9proxyevent3-top/post64-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event announcement that pairs a punchy headline with playful, celebratory accents. The layout keeps the key info front and center.">
+    <img class="work-media" src="works/social/post65-9proxyevent3-top/post65-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event campaign post built around urgency and energy, with bold type and eye-catching highlights. It is designed to make the promotion impossible to miss.">
+    <img class="work-media" src="works/social/post66-9proxyevent3-top/post66-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1176/784">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event visual that turns a limited-time offer into an exciting, clear call to action. Dynamic composition and strong contrast fuel engagement.">
+    <img class="work-media" src="works/social/post55-9proxyevent3/post55-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 776/948">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A festive 9Proxy event post with lively accents and a confident, benefit-led message. The design balances hype with clean, readable structure.">
+    <img class="work-media" src="works/social/post56-9proxyevent3/post56-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1572/936">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event promotion styled for the feed, where a bold reward or prize takes the spotlight. Energetic color and tidy text blocks keep it engaging.">
+    <img class="work-media" src="works/social/post57-9proxyevent3/post57-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1508/948">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event visual designed to build anticipation, using motion-inspired accents and a clear headline. The key action reads instantly.">
+    <img class="work-media" src="works/social/post61-9proxyevent3/post61-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A high-energy event post that frames a special offer with vibrant, tech-driven visuals. The composition drives clicks while staying clear.">
+    <img class="work-media" src="works/social/post46-9proxyevent2/post46-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event announcement with a playful, celebratory tone and a strong focal message. Accents and contrast make the promotion pop.">
+    <img class="work-media" src="works/social/post48-9proxyevent2/post49-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 970/1185">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event campaign visual built to convert attention into participation, pairing a bold claim with dynamic design. The details stay easy to follow.">
+    <img class="work-media" src="works/social/post49-9proxyevent2/post49-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 970/1185">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event post styled with excitement in mind, where prizes and deadlines read at a glance. Energetic color keeps the feed lively.">
+    <img class="work-media" src="works/social/post50-9proxyevent2/post50-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 970/1185">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A hype-focused event visual that leads with a bold reward and a clear join-now message. The layout is punchy, colorful, and direct.">
+    <img class="work-media" src="works/social/post51-9proxyevent2/post51-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event promotion with a fun, high-energy look and a confident headline. Clean text blocks keep the excitement organized.">
+    <img class="work-media" src="works/social/post52-9proxyevent2/post52-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event post designed to feel like a moment, using vibrant accents and a strong focal point. The offer and action are framed clearly.">
+    <img class="work-media" src="works/social/post69-9proxyevent4/post69-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event visual that turns a campaign into an eye-catching invitation. Dynamic color and bold type drive engagement.">
+    <img class="work-media" src="works/social/post70-9proxyevent4/post71-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1657/630">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A celebratory event post where a big offer meets a lively, tech-forward composition. The message stays sharp and action-driven.">
+    <img class="work-media" src="works/social/post71-9proxyevent4/post72-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 632/194">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event announcement built for reach, pairing a punchy hook with clean, readable details. Energetic accents keep it engaging.">
+    <img class="work-media" src="works/social/post72-9proxyevent4/post72-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 926/96">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event promotion styled around urgency, with a bold countdown-style headline and vibrant visuals. It pushes users to act fast.">
+    <img class="work-media" src="works/social/post73-9proxyevent4/post73-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1920/1281">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event visual with a playful, rewarding tone and a clear call to action. Strong contrast makes the promotion stand out.">
+    <img class="work-media" src="works/social/post74-9proxyevent4/post74-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1920/1281">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A high-impact event post that frames the campaign with dynamic, colorful design. The key offer reads instantly on the feed.">
+    <img class="work-media" src="works/social/post75-9proxyevent4/post75-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1573/937">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event promotion built to excite and convert, using bold type and energetic accents. The details remain clean and clear.">
+    <img class="work-media" src="works/social/post29-9proxyevent1/post29-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 754/474">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="An event visual with a lively, celebratory mood that spotlights the reward. Tidy composition keeps the message focused.">
+    <img class="work-media" src="works/social/post30-9proxyevent1/post30-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 1572/936">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy event post styled for maximum attention, pairing a bold claim with vibrant, tech-driven visuals. The action is clear and inviting.">
+    <img class="work-media" src="works/social/post31-9proxyevent1/post31-final.webp" alt="Social — 9Proxy Event" loading="lazy" style="--ar: 776/948">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy Event</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy brand visual with a cool, tech-driven palette and a clear focal message. Accents keep attention on the key point.">
+    <img class="work-media" src="works/social/post35-9proxynor-top/post35-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1572/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy social post that turns product strengths into a confident, readable statement. Sleek composition keeps it modern.">
+    <img class="work-media" src="works/social/post36-9proxynor-top/post36-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 786/468">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy visual styled for the feed with a bold hook and clean structure. The design feels current, fast, and dependable.">
+    <img class="work-media" src="works/social/post32-9proxynor/post32-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1572/1920">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A tech-styled 9Proxy post where a strong headline sits against a sleek backdrop. Sharp type and accents keep the message clear.">
+    <img class="work-media" src="works/social/post34-9proxynor/post34-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 809/988">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy brand post with a modern, minimal aesthetic that keeps focus on the message. Subtle accents give it a polished edge.">
+    <img class="work-media" src="works/social/post41-9proxynor/post41-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy visual built for clarity and speed, pairing a confident claim with a tidy layout. The look stays professional and on-brand.">
+    <img class="work-media" src="works/social/post42-9proxynor/post42-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="social"
+     data-desc="A 9Proxy social post with a futuristic, tech-forward feel and a clear focal point. Clean contrast makes the message pop on the feed.">
+    <img class="work-media" src="works/social/post59-9proxynor/post59-final.webp" alt="Social — 9Proxy" loading="lazy" style="--ar: 1200/1200">
+    <div class="work-overlay"><span class="w-cat">Social</span><span class="w-name">9Proxy</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- MOTION -->
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy motion piece that opens with a punchy hook and flows through smooth, tech-styled transitions. Timing and accents keep the message energetic and clear.">
+    <video class="work-media" src="works/motion/motion-7-9proxy-top/motion7-final.mp4" poster="works/motion/motion-7-9proxy-top/motion7-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A dynamic 9Proxy animation where sleek transitions carry the viewer through key features. Rhythm and motion give the brand a fast, modern feel.">
+    <video class="work-media" src="works/motion/motion-8-9proxy-top/motion8-final.mp4" poster="works/motion/motion-8-9proxy-top/motion8-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A motion graphics spot for 9Proxy built around crisp movement and confident pacing. Each beat highlights a benefit while keeping the flow engaging.">
+    <video class="work-media" src="works/motion/motion-9-9proxy-top/motion9-final.mp4" poster="works/motion/motion-9-9proxy-top/motion9-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy animated piece that uses glowing accents and fluid transitions to feel high-tech. The message stays sharp as the visuals move.">
+    <video class="work-media" src="works/motion/motion-2-9proxy/motion2-final.mp4" poster="works/motion/motion-2-9proxy/motion2-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1080/1920"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A tech-forward 9Proxy motion clip where elements slide and build in a clean rhythm. The pacing keeps attention locked from start to finish.">
+    <video class="work-media" src="works/motion/motion-3-9proxy/motion3-final.mp4" poster="works/motion/motion-3-9proxy/motion3-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy motion spot designed to feel fast and reliable, with smooth cuts and dynamic type. Movement reinforces the brand's performance story.">
+    <video class="work-media" src="works/motion/motion-4-9proxy/motion4-final.mp4" poster="works/motion/motion-4-9proxy/motion4-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="An animated 9Proxy piece that turns features into a well-timed visual sequence. Clean transitions and accents keep it modern and clear.">
+    <video class="work-media" src="works/motion/motion-5-9proxy/motion5-final.mp4" poster="works/motion/motion-5-9proxy/motion5-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy motion clip built around momentum, where each transition pushes the story forward. The tone stays energetic and tech-driven.">
+    <video class="work-media" src="works/motion/motion-6-9proxy/motion6-final.mp4" poster="works/motion/motion-6-9proxy/motion6-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A dynamic 9Proxy animation with confident pacing and sleek, glowing details. The message lands clearly while the visuals stay lively.">
+    <video class="work-media" src="works/motion/motion-10-9proxy/motion10-final.mp4" poster="works/motion/motion-10-9proxy/motion10-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A motion graphics piece for 9Proxy that balances speed with readability. Smooth movement and bold accents keep the brand feeling premium.">
+    <video class="work-media" src="works/motion/motion16-9proxy/motion16-final.mp4" poster="works/motion/motion16-9proxy/motion16-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy animated spot where type and graphics move in a tight, rhythmic flow. The design feels fast, clean, and engaging.">
+    <video class="work-media" src="works/motion/motion17-9proxy/motion17-final.mp4" poster="works/motion/motion17-9proxy/motion17-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A tech-styled 9Proxy motion clip that leads with impact and carries a clear message. Fluid transitions and accents keep the energy high.">
+    <video class="work-media" src="works/motion/motion18-9proxy/motion19-final.mp4" poster="works/motion/motion18-9proxy/motion19-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy motion piece built for the feed, pairing punchy pacing with a sleek, modern look. Each moment keeps the viewer's attention.">
+    <video class="work-media" src="works/motion/motion19-9proxy/motion19-final.mp4" poster="works/motion/motion19-9proxy/motion19-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1200/1200"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy Motion</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A short-form 9Proxy motion piece made for TikTok, built to hook viewers in the first seconds. Fast cuts and bold accents keep the energy high and the message clear.">
+    <video class="work-media" src="works/motion/motion-11-9proxytiktok/motion11-final.mp4" poster="works/motion/motion-11-9proxytiktok/motion11-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1080/1920"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy TikTok</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A vertical 9Proxy TikTok clip with punchy pacing and playful, tech-styled motion. The design grabs attention instantly and holds it through the loop.">
+    <video class="work-media" src="works/motion/motion-12-9proxytiktok/motion12-final.mp4" poster="works/motion/motion-12-9proxytiktok/motion12-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1080/1920"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy TikTok</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy motion piece built for YouTube, balancing storytelling with clear brand communication. Fluid sequences guide the viewer smoothly through the content.">
+    <video class="work-media" src="works/motion/motion-13-9proxyytb/motion13-final.mp4" poster="works/motion/motion-13-9proxyytb/motion13-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy YouTube</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A YouTube-focused 9Proxy animation where well-paced transitions carry a longer narrative. The visuals stay polished while keeping the message front and center.">
+    <video class="work-media" src="works/motion/motion-14-9proxyytb/motion14.mp4" poster="works/motion/motion-14-9proxyytb/motion14-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy YouTube</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A 9Proxy motion spot for YouTube that blends dynamic movement with a clear, structured flow. Timing keeps the content engaging from intro to end.">
+    <video class="work-media" src="works/motion/motion-15-9proxyytb/motion15-final.mp4" poster="works/motion/motion-15-9proxyytb/motion15-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">9Proxy YouTube</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A lyric motion piece where typography moves in time with the music, turning the words themselves into the main visual. Timing, rhythm, and glowing accents keep every line easy to follow while building mood and emotion.">
+    <video class="work-media" src="works/motion/motion-1-product/motion1-final.mp4" poster="works/motion/motion-1-product/motion1-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">Lyric Video</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A motion piece made as a coursework showcase, exploring core animation principles through clean, playful character work. Smooth movement and bright, illustrative visuals demonstrate a solid grasp of timing and storytelling.">
+    <video class="work-media" src="works/motion/motion20-product/motion20-final.mp4" poster="works/motion/motion20-product/motion20-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">Coursework Showcase</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="motion"
+     data-desc="A corporate profile motion video that introduces a brand through friendly, illustrated scenes. Clear pacing and simple character animation make the company's message approachable and easy to understand.">
+    <video class="work-media" src="works/motion/motion21-product/motion21-final.mp4" poster="works/motion/motion21-product/motion21-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">Motion</span><span class="w-name">Corporate Profile Video</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- VIDEO EDITING -->
+  <a class="work" href="#" data-cat="video-editing"
+     data-embed="https://player.vimeo.com/video/1209082214?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+     data-title="Pixel Perfect Recap 2025"
+     data-desc="A fast-paced recap edit that condenses highlights into an energetic, well-timed montage. Sharp cutting and smooth transitions tell a clear story from start to finish.">
+    <img class="work-media" src="https://i.vimeocdn.com/video/2178570491-7c6810c8ab730d2354762a57f98e523f8cb5ad4dc0941149119dd488b6eca69b-d_1280?region=us" alt="Video Editing — Pixel Perfect Recap 2025" loading="lazy" style="--ar: 16/9">
+    <div class="work-overlay"><span class="w-cat">Video Editing</span><span class="w-name">Pixel Perfect Recap 2025</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- LED VISUALS -->
+  <a class="work" href="#" data-cat="led-visuals"
+     data-images="works/led-visuals/visual-1/visual1-1.webp|works/led-visuals/visual-1/visual1-2.webp"
+     data-desc="A large-format LED visual designed for on-screen impact, with bold shapes and vivid color that read from a distance. The motion feel keeps the display immersive and high-energy.">
+    <img class="work-media" src="works/led-visuals/visual-1/visual1-1.webp" alt="LED Visuals — LED Visuals" loading="lazy" style="--ar: 1920/960">
+    <div class="work-overlay"><span class="w-cat">LED Visuals</span><span class="w-name">LED Visuals</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="led-visuals"
+     data-desc="An LED stage visual built around striking contrast and rhythmic movement. It is crafted to hold attention on a big screen while supporting the moment it accompanies.">
+    <img class="work-media" src="works/led-visuals/visual-2/visual2-final.webp" alt="LED Visuals — LED Visuals" loading="lazy" style="--ar: 1920/1080">
+    <div class="work-overlay"><span class="w-cat">LED Visuals</span><span class="w-name">LED Visuals</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="led-visuals"
+     data-images="works/led-visuals/visual-3/visual3-1.webp|works/led-visuals/visual-3/visual3-2.webp"
+     data-desc="A dynamic LED visual where color and form create an immersive backdrop. The design stays bold and clear, making a strong impression even at scale.">
+    <img class="work-media" src="works/led-visuals/visual-3/visual3-1.webp" alt="LED Visuals — LED Visuals" loading="lazy" style="--ar: 1920/1080">
+    <div class="work-overlay"><span class="w-cat">LED Visuals</span><span class="w-name">LED Visuals</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- 3D -->
+  <a class="work" href="#" data-cat="3d"
+     data-desc="An academic 3D project exploring form, lighting, and material as part of hands-on coursework. Careful composition and detailing show a growing command of realistic rendering.">
+    <video class="work-media" src="works/3d/3d1-hoc/3d1-final.mp4" poster="works/3d/3d1-hoc/3d1-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">3D</span><span class="w-name">Academic 3D Project</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="3d"
+     data-desc="A 3D study created for coursework, focused on shaping form and texture under controlled lighting. The result balances technical practice with a clean, considered look.">
+    <video class="work-media" src="works/3d/3d2-hoc/3d2-final.mp4" poster="works/3d/3d2-hoc/3d2-final-poster.webp" muted loop playsinline preload="none" style="--ar: 1920/1080"></video>
+    <div class="work-overlay"><span class="w-cat">3D</span><span class="w-name">Academic 3D Project</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="3d"
+     data-images="works/3d/3d3-hoc/3d3-1.webp|works/3d/3d3-hoc/3d3-2.webp|works/3d/3d3-hoc/3d3-3.webp"
+     data-desc="An academic 3D piece where modeling and lighting come together in a crafted, believable scene. It reflects a learning process aimed at realism and polish.">
+    <img class="work-media" src="works/3d/3d3-hoc/3d3-1.webp" alt="3D — Academic 3D Project" loading="lazy" style="--ar: 1920/1080">
+    <div class="work-overlay"><span class="w-cat">3D</span><span class="w-name">Academic 3D Project</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="3d"
+     data-images="works/3d/3d4-hoc/3d4-1.webp|works/3d/3d4-hoc/3d4-2.webp|works/3d/3d4-hoc/3d4-3.webp"
+     data-desc="A 3D coursework project built around light, surface, and composition. The render demonstrates solid fundamentals with a crisp, professional finish.">
+    <img class="work-media" src="works/3d/3d4-hoc/3d4-1.webp" alt="3D — Academic 3D Project" loading="lazy" style="--ar: 1280/720">
+    <div class="work-overlay"><span class="w-cat">3D</span><span class="w-name">Academic 3D Project</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="3d"
+     data-images="works/3d/3d5-hoc/3d5-1.webp|works/3d/3d5-hoc/3d5-2.webp|works/3d/3d5-hoc/3d5-3.webp|works/3d/3d5-hoc/3d5-4.webp|works/3d/3d5-hoc/3d5-5.webp|works/3d/3d5-hoc/3d5-6.webp|works/3d/3d5-hoc/3d5-7.webp|works/3d/3d5-hoc/3d5-8.webp|works/3d/3d5-hoc/3d5-9.webp|works/3d/3d5-hoc/3d5-10.webp|works/3d/3d5-hoc/3d5-11.webp"
+     data-desc="An academic 3D render that experiments with material and lighting to add depth. The detailing shows a clear step forward in skill and craft.">
+    <img class="work-media" src="works/3d/3d5-hoc/3d5-1.webp" alt="3D — Academic 3D Project" loading="lazy" style="--ar: 1920/1920">
+    <div class="work-overlay"><span class="w-cat">3D</span><span class="w-name">Academic 3D Project</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="3d"
+     data-flow="deck"
+     data-images="works/3d/3d6-thicong/3d6-final-page-01.webp|works/3d/3d6-thicong/3d6-final-page-02.webp|works/3d/3d6-thicong/3d6-final-page-03.webp|works/3d/3d6-thicong/3d6-final-page-04.webp|works/3d/3d6-thicong/3d6-final-page-05.webp|works/3d/3d6-thicong/3d6-final-page-06.webp|works/3d/3d6-thicong/3d6-final-page-07.webp|works/3d/3d6-thicong/3d6-final-page-08.webp|works/3d/3d6-thicong/3d6-final-page-09.webp|works/3d/3d6-thicong/3d6-final-page-10.webp|works/3d/3d6-thicong/3d6-final-page-11.webp|works/3d/3d6-thicong/3d6-final-page-12.webp|works/3d/3d6-thicong/3d6-final-page-13.webp|works/3d/3d6-thicong/3d6-final-page-14.webp|works/3d/3d6-thicong/3d6-final-page-15.webp|works/3d/3d6-thicong/3d6-final-page-16.webp|works/3d/3d6-thicong/3d6-final-page-17.webp|works/3d/3d6-thicong/3d6-final-page-18.webp|works/3d/3d6-thicong/3d6-final-page-19.webp|works/3d/3d6-thicong/3d6-final-page-20.webp"
+     data-desc="A 3D retail visualization that turns a store concept into a buildable, real-world model. Accurate modeling and materials preview how the space and signage will look before construction.">
+    <img class="work-media" src="works/3d/3d6-thicong/3d6-final-page-01.webp" alt="3D — 3D Retail Visualization" loading="lazy" style="--ar: 1600/900">
+    <div class="work-overlay"><span class="w-cat">3D</span><span class="w-name">3D Retail Visualization</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- PRINT -->
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-12-pp/print12-1.webp|works/print/print-12-pp/print12-2.webp|works/print/print-12-pp/print12-3.webp|works/print/print-12-pp/print12-4.webp"
+     data-desc="A large-format signage and banner design built for strong on-site visibility. A bold headline and clear focal point ensure the message reads instantly, even from a distance.">
+    <img class="work-media" src="works/print/print-12-pp/print12-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1920/1120">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-13-pp/print13-1.webp|works/print/print-13-pp/print13-2.webp|works/print/print-13-pp/print13-3.webp|works/print/print-13-pp/print13-4.webp"
+     data-desc="A promotional banner with high-contrast typography and a clean hierarchy. It is designed to catch the eye in a busy space and deliver the key message at a glance.">
+    <img class="work-media" src="works/print/print-13-pp/print13-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1920/384">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A large-format banner built around a single, confident focal point. Bold color and a tidy layout help it stand out and communicate clearly in a physical setting.">
+    <img class="work-media" src="works/print/print-14-pp/print14-final.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1418/567">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-8-sch/print8-1.webp|works/print/print-8-sch/print8-2.webp"
+     data-desc="A signage and banner design for an education setting, styled to feel friendly and organized. Clear structure and approachable visuals make the information easy to read.">
+    <img class="work-media" src="works/print/print-8-sch/print8-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1920/1711">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-9-sch/print9-1.webp|works/print/print-9-sch/print9-2.webp"
+     data-desc="An event banner for a school context that keeps its message neat and inviting. Balanced layout and warm accents suit the audience and read well at scale.">
+    <img class="work-media" src="works/print/print-9-sch/print9-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1553/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A school banner where a cheerful, structured layout meets a clear focal message. The design stays approachable while remaining easy to read from a distance.">
+    <img class="work-media" src="works/print/print-10-sch/print10-final.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1920/422">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A storefront signage design for a financial-services brand, balancing clarity with a trustworthy look. Strong hierarchy keeps the key details legible at a glance.">
+    <img class="work-media" src="works/print/print-15-camdo/print15-final.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1080/1440">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A banner design for a pawn and finance brand, styled to feel dependable and professional. Clean structure and confident type make the message clear on-site.">
+    <img class="work-media" src="works/print/print-16-camdo/print16-final.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1440/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A signage piece for a financial brand where clear information meets a credible, approachable look. The layout guides the eye straight to what matters.">
+    <img class="work-media" src="works/print/print-17-camdo/print17-final.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1440/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A promotional banner for a financial-services brand built around trust and readability. Tidy composition and strong contrast keep it clear at any size.">
+    <img class="work-media" src="works/print/print-18-camdo/print18-camdo.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1440/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-19-camdo/print19-1.webp|works/print/print-19-camdo/print19-2.webp|works/print/print-19-camdo/print19-3.webp|works/print/print-19-camdo/print19-4.webp"
+     data-desc="A storefront banner for a pawn and finance brand with a clean, no-nonsense layout. Clear hierarchy and steady structure make it easy to read from the street.">
+    <img class="work-media" src="works/print/print-19-camdo/print19-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 1920/1407">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-1-infor/print1-final.webp|works/print/print-1-infor/print1-demo.webp"
+     data-desc="An infographic that turns information into a clear, visual story. Structured layout, icons, and typography guide the reader through the content step by step.">
+    <img class="work-media" src="works/print/print-1-infor/print1-final.webp" alt="Print — Infographic" loading="lazy" style="--ar: 1356/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Infographic</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-4-infor/print4-1.webp|works/print/print-4-infor/print4-2.webp|works/print/print-4-infor/print4-3.webp|works/print/print-4-infor/print4-4.webp"
+     data-desc="A data-focused infographic where complex details become simple and scannable. Clean structure and visual cues keep it easy to follow.">
+    <img class="work-media" src="works/print/print-4-infor/print4-1.webp" alt="Print — Infographic" loading="lazy" style="--ar: 1358/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Infographic</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-5-infor/print5-1.webp|works/print/print-5-infor/print5-2.webp|works/print/print-5-infor/print5-3.webp|works/print/print-5-infor/print5-4.webp"
+     data-desc="An infographic built around clarity, using icons and hierarchy to organize the message. The result feels tidy, informative, and approachable.">
+    <img class="work-media" src="works/print/print-5-infor/print5-1.webp" alt="Print — Infographic" loading="lazy" style="--ar: 1358/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Infographic</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-6-infor/print6-1.webp|works/print/print-6-infor/print6-2.webp|works/print/print-6-infor/print6-3.webp"
+     data-desc="A visual infographic that breaks information into digestible sections. Balanced layout and clear typography make it engaging and easy to read.">
+    <img class="work-media" src="works/print/print-6-infor/print6-1.webp" alt="Print — Infographic" loading="lazy" style="--ar: 1358/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Infographic</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-2/print2-1.webp|works/print/print-2/print2-2.webp|works/print/print-2/print2-3.webp|works/print/print-2/print2-4.webp|works/print/print-2/print2-5.webp|works/print/print-2/print2-6.webp|works/print/print-2/print2-7.webp"
+     data-desc="A coffee menu design with a warm, appetizing look that puts the drinks front and center. Playful typography and rich tones make the offerings feel inviting and easy to browse.">
+    <img class="work-media" src="works/print/print-2/print2-1.webp" alt="Print — Menu" loading="lazy" style="--ar: 1353/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Menu</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-3/print3-1.webp|works/print/print-3/print3-2.webp|works/print/print-3/print3-3.webp|works/print/print-3/print3-4.webp"
+     data-desc="A promotional banner design for a fruit-tea brand, styled with a fresh, natural feel. Bright imagery and clean typography highlight the product and make the message pop.">
+    <img class="work-media" src="works/print/print-3/print3-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 560/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-6/print6-1.webp|works/print/print-6/print6-2.webp"
+     data-desc="A store signage and banner design for a water-purifier retailer, built for clear, high-impact display. Bold typography and a clean product layout make the brand and services easy to read at a glance.">
+    <img class="work-media" src="works/print/print-6/print6-1.webp" alt="Print — Signage & Banner Design" loading="lazy" style="--ar: 851/1701">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Signage &amp; Banner Design</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-images="works/print/print-7/print7-1.webp|works/print/print-7/print7-2.webp"
+     data-desc="A formal introduction letter designed with a refined, ceremonial layout for a 60th-anniversary milestone. Elegant typography and traditional accents give the document a dignified tone while keeping it easy to read.">
+    <img class="work-media" src="works/print/print-7/print7-1.webp" alt="Print — Introduction Letter" loading="lazy" style="--ar: 1358/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Introduction Letter</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="print"
+     data-desc="A charity poster built around an emotional black-and-white photo collage and a clear, heartfelt message. Strong contrast and a bold headline draw attention while guiding the viewer toward the call to action.">
+    <img class="work-media" src="works/print/print-11/print11-final.webp" alt="Print — Poster" loading="lazy" style="--ar: 1358/1920">
+    <div class="work-overlay"><span class="w-cat">Print</span><span class="w-name">Poster</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+
+<!-- OTHERS -->
+  <a class="work" href="#" data-cat="others"
+     data-desc="A web banner designed to sit cleanly within a website layout, pairing a clear message with an eye-catching visual. The composition guides visitors toward the intended action.">
+    <img class="work-media" src="works/others/others-1-camdo/other1-final.webp" alt="Others — Banner website" loading="lazy" style="--ar: 1920/508">
+    <div class="work-overlay"><span class="w-cat">Others</span><span class="w-name">Banner website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="others"
+     data-desc="A website banner built for a crisp, on-brand first impression. Balanced typography and imagery keep it readable across screen sizes while highlighting the key offer.">
+    <img class="work-media" src="works/others/others-2-camdo/other2-final.webp" alt="Others — Banner website" loading="lazy" style="--ar: 1920/508">
+    <div class="work-overlay"><span class="w-cat">Others</span><span class="w-name">Banner website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+  <a class="work" href="#" data-cat="others"
+     data-desc="A web banner styled for clarity and impact within a page, where a focused headline meets a clean visual. It reinforces the brand while driving the click.">
+    <img class="work-media" src="works/others/others-3-camdo/other3-final.webp" alt="Others — Banner website" loading="lazy" style="--ar: 1920/508">
+    <div class="work-overlay"><span class="w-cat">Others</span><span class="w-name">Banner website</span></div>
+    <span class="work-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+  </a>
+
+</main>
+
+<!-- ============ CONTACT / LET'S TALK ============ -->
+<section class="contact" id="contact">
+  <h2 class="fade" style="--fy:40px">Let&rsquo;s talk</h2>
+  <p class="contact-sub fade" style="--fdelay:.1s">Have a project in mind? I take genuine ownership of every brief and care about delivering work that creates real value.</p>
+
+  <div class="contact-links fade" style="--fdelay:.2s">
+    <a href="mailto:khoadesign169@gmail.com">khoadesign169@gmail.com</a>
+    <a href="tel:+84901008587">+84 901 008 587</a>
+    <a href="https://zalo.me/0901008587" target="_blank" rel="noopener">Zalo</a>
+    <a href="https://www.tiktok.com/@nguyenkhoa1609" target="_blank" rel="noopener">TikTok</a>
+  </div>
+
+  <div class="tools fade" style="--fdelay:.3s">
+    <span>Ps</span><span>Ai</span><span>Ae</span><span>Pr</span><span>Id</span>
+    <span>Cinema 4D</span><span>Blender</span><span>Figma</span><span>DaVinci</span>
+  </div>
+
+  <p class="footer-note">&copy; 2026 Nguyen Minh Khoa - Ho Chi Minh City</p>
+</section>
+
+<script>
+(function () {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav glass on scroll */
+  const siteNav = document.getElementById('siteNav');
+  function navGlass() { siteNav.classList.toggle('scrolled', window.scrollY > 40); }
+  window.addEventListener('scroll', navGlass, { passive: true });
+  navGlass();
+
+  /* fade-in on view */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { rootMargin: '50px', threshold: 0 });
+  document.querySelectorAll('.fade').forEach(el => io.observe(el));
+
+  /* filter + masonry xếp ngang */
+  const filterWrap = document.getElementById('worksFilter');
+  const grid = document.getElementById('worksGrid');
+  const allItems = Array.from(grid.querySelectorAll('.work'));
+  let currentCat = 'all';
+
+  function colCount() {
+    const w = innerWidth;
+    if (w <= 820) return 2; /* mobile: 2 cột */
+    if (w <= 1200) return 3;
+    return 4;
+  }
+
+  function itemRatio(it) {
+    const ar = it.querySelector('.work-media')?.style.getPropertyValue('--ar') || '1/1';
+    const p = ar.split('/');
+    const r = parseFloat(p[0]) / parseFloat(p[1] || 1);
+    return (isFinite(r) && r > 0) ? r : 1;
+  }
+
+  function layout() {
+    const n = colCount();
+    const cols = [], hts = [];
+    grid.innerHTML = '';
+    for (let i = 0; i < n; i++) {
+      const c = document.createElement('div');
+      c.className = 'works-col';
+      grid.appendChild(c);
+      cols.push(c); hts.push(0);
+    }
+    allItems.forEach(it => {
+      const show = currentCat === 'all' || it.dataset.cat === currentCat;
+      it.classList.toggle('hide', !show);
+      if (!show) { cols[0].appendChild(it); return; }
+      let k = 0;
+      for (let i = 1; i < n; i++) if (hts[i] < hts[k] - 0.001) k = i;
+      cols[k].appendChild(it);
+      hts[k] += 1 / itemRatio(it);
+    });
+  }
+
+  function applyFilter(cat) {
+    const prev = currentCat;
+    currentCat = cat;
+    layout();
+    if (!reduced && prev !== cat) {
+      let j = 0;
+      allItems.forEach(it => {
+        if (it.classList.contains('hide')) return;
+        it.classList.add('entering');
+        setTimeout(() => it.classList.remove('entering'), 60 + (j++) * 30);
+      });
+    }
+  }
+
+  let lastCols = colCount();
+  window.addEventListener('resize', () => {
+    const n = colCount();
+    if (n !== lastCols) { lastCols = n; layout(); }
+  }, { passive: true });
+
+  layout();
+
+  filterWrap.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-filter]');
+    if (!btn) return;
+    filterWrap.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+    applyFilter(btn.dataset.filter);
+  });
+
+  /* deep-link: creative-portfolio.html#branding | #social | #motion | ... */
+  function filterFromHash() {
+    const cat = decodeURIComponent(location.hash.replace('#', '')).toLowerCase();
+    const btn = filterWrap.querySelector(`button[data-filter="${cat}"]`);
+    if (!btn) return false;
+    filterWrap.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+    applyFilter(cat);
+    return true;
+  }
+  filterFromHash();
+  window.addEventListener('hashchange', filterFromHash);
+
+  /* lần đầu vào trang: các item hiện dần theo lớp */
+  if (!reduced) {
+    allItems.forEach((it, i) => {
+      it.classList.add('entering');
+      setTimeout(() => it.classList.remove('entering'), 150 + i * 55);
+    });
+  }
+})();
+</script>
+<script>
+/* Nav: trang con luôn ở mục Projects, chuyển sang Contact khi cuộn tới Let's talk */
+(function(){
+  const proj = document.getElementById('navProjects');
+  const contactLink = document.querySelector('.nav-contact');
+  const contactSec = document.getElementById('contact');
+  if(!proj || !contactLink || !contactSec) return;
+  let raf = null;
+  function spy(){
+    raf = null;
+    const inContact = contactSec.getBoundingClientRect().top <= innerHeight * 0.35;
+    contactLink.classList.toggle('current', inContact);
+    proj.classList.toggle('current', !inContact);
+  }
+  addEventListener('scroll', () => { if(!raf) raf = requestAnimationFrame(spy); }, { passive: true });
+  spy();
+})();
+</script>
+<!-- ============ LIGHTBOX — CHI TIẾT ẤN PHẨM ============ -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="lb-backdrop" id="lbBackdrop"></div>
+  <button class="lb-close" id="lbClose" aria-label="Đóng">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="lb-inner portrait" id="lbInner">
+    <div class="lb-media-col">
+      <div class="lb-media" id="lbMedia"></div>
+      <div class="lb-dots" id="lbDots" aria-hidden="true"></div>
+    </div>
+    <div class="lb-text">
+      <span class="lb-cat" id="lbCat"></span>
+      <h3 id="lbTitle"></h3>
+      <div id="lbDesc"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= LIGHTBOX ================= */
+(function () {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Video trong grid: muted + loop, chỉ play khi vào khung nhìn (tiết kiệm băng thông) */
+  const gridVids = document.querySelectorAll('video.work-media');
+  gridVids.forEach(v => {
+    v.muted = true; v.loop = true; v.playsInline = true;
+    v.setAttribute('playsinline', '');
+  });
+  const vio = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      const v = en.target;
+      if (en.isIntersecting) { v.play().catch(() => {}); }
+      else { v.pause(); }
+    });
+  }, { rootMargin: '160px' });
+  gridVids.forEach(v => vio.observe(v));
+
+  const lb       = document.getElementById('lb');
+  const inner    = document.getElementById('lbInner');
+  const mediaBox = document.getElementById('lbMedia');
+  const elCat    = document.getElementById('lbCat');
+  const elTitle  = document.getElementById('lbTitle');
+  const elDesc   = document.getElementById('lbDesc');
+  const dotsBox  = document.getElementById('lbDots');
+
+  let timer = null;
+  let slideEls = [];
+  let dotEls = [];
+  let idx = 0;
+
+  const DEFAULT_DESC = 'Nội dung chi tiết của ấn phẩm sẽ hiển thị tại đây. Thêm attribute data-desc vào thẻ <a class="work"> để thay phần mô tả này (xuống dòng trong attribute sẽ tách thành từng đoạn).';
+
+  function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+
+  function goTo(i) {
+    idx = (i + slideEls.length) % slideEls.length;
+    slideEls.forEach((s, k) => s.classList.toggle('on', k === idx));
+    dotEls.forEach((d, k) => d.classList.toggle('on', k === idx));
+  }
+
+  const NAV_SVG = {
+    prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'
+  };
+  const SOUND_SVG = '<svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
+                  + '<svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+
+  function addSoundBtn(video) {
+    const btn = document.createElement('button');
+    btn.className = 'lb-sound';
+    btn.setAttribute('aria-label', 'Bật / tắt âm thanh');
+    btn.innerHTML = SOUND_SVG;
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      video.muted = !video.muted;
+      btn.classList.toggle('on', !video.muted);
+      if (!video.muted) video.play().catch(() => {});
+    });
+    mediaBox.appendChild(btn);
+  }
+
+  function buildSlides(work) {
+    const scrolly = inner.classList.contains('scrolly');
+    mediaBox.innerHTML = '';
+    dotsBox.innerHTML = '';
+    dotsBox.classList.remove('show');
+    slideEls = []; dotEls = []; idx = 0;
+
+    const thumb = work.querySelector('.work-media');
+    const list = (work.dataset.images || '')
+      .split(/[|,]/).map(s => s.trim()).filter(Boolean);
+
+    if (work.dataset.embed) {
+      /* Video nhúng (Vimeo/YouTube) — player có sẵn nút âm thanh/fullscreen */
+      const slide = document.createElement('div');
+      slide.className = 'lb-slide on';
+      const f = document.createElement('iframe');
+      f.src = work.dataset.embed + (work.dataset.embed.includes('?') ? '&' : '?') + 'autoplay=1';
+      f.allow = 'autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share';
+      f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      f.title = work.dataset.title || '';
+      slide.appendChild(f);
+      mediaBox.appendChild(slide);
+      slideEls.push(slide);
+    } else if (list.length) {
+      /* Nhiều ảnh (vd: hoàn thiện + phát thảo) → slideshow tự chạy */
+      list.forEach(src => {
+        const slide = document.createElement('div');
+        slide.className = 'lb-slide';
+        const img = document.createElement('img');
+        img.src = src; img.alt = '';
+        slide.appendChild(img);
+        mediaBox.appendChild(slide);
+        slideEls.push(slide);
+      });
+    } else {
+      /* 1 media duy nhất → nhân bản thumbnail (img / video / placeholder) */
+      const slide = document.createElement('div');
+      slide.className = 'lb-slide';
+      const clone = thumb.cloneNode(true);
+      clone.classList.remove('work-media');
+      clone.classList.add('lb-ph');
+      clone.style.aspectRatio = 'auto';
+      if (clone.tagName === 'VIDEO') {
+        clone.muted = true; clone.loop = true; clone.autoplay = true; clone.playsInline = true;
+        clone.preload = 'auto';
+        clone.setAttribute('playsinline', '');
+      }
+      slide.appendChild(clone);
+      mediaBox.appendChild(slide);
+      slideEls.push(slide);
+      if (clone.tagName === 'VIDEO') addSoundBtn(clone);
+    }
+
+    /* Thanh trượt dưới chân ảnh + nút tới/lui + auto chạy khi có từ 2 slide */
+    if (slideEls.length > 1 && !scrolly) {
+      slideEls.forEach((_, k) => {
+        const d = document.createElement('i');
+        d.addEventListener('click', () => { goTo(k); restartTimer(); });
+        dotsBox.appendChild(d);
+        dotEls.push(d);
+      });
+      dotsBox.classList.add('show');
+
+      ['prev', 'next'].forEach(dir => {
+        const b = document.createElement('button');
+        b.className = 'lb-nav ' + dir;
+        b.setAttribute('aria-label', dir === 'prev' ? 'Ảnh trước' : 'Ảnh sau');
+        b.innerHTML = NAV_SVG[dir];
+        b.addEventListener('click', e => {
+          e.stopPropagation();
+          goTo(idx + (dir === 'next' ? 1 : -1));
+          restartTimer();
+        });
+        mediaBox.appendChild(b);
+      });
+
+      /* vuốt trên mobile */
+      let tx = null;
+      mediaBox.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+      mediaBox.addEventListener('touchend', e => {
+        if (tx === null) return;
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 40) { goTo(idx + (dx < 0 ? 1 : -1)); restartTimer(); }
+        tx = null;
+      }, { passive: true });
+    }
+    goTo(0);
+    restartTimer();
+  }
+
+  function restartTimer() {
+    stopTimer();
+    if (slideEls.length > 1 && !reduced && !inner.classList.contains('scrolly')) {
+      timer = setInterval(() => goTo(idx + 1), 2000);
+    }
+  }
+
+  function open(work) {
+    /* Website + Branding + item dạng deck (PDF): text trước, ảnh full-width scroll (kiểu Behance) */
+    const isDeck = work.dataset.flow === 'deck';
+    const scrolly = work.dataset.cat === 'website' || work.dataset.cat === 'branding' || isDeck;
+    inner.classList.toggle('scrolly', scrolly);
+    inner.classList.toggle('seamless', (work.dataset.cat === 'branding' || isDeck) && work.dataset.seamless !== 'off');
+
+    /* Tỉ lệ lấy từ kích thước media thật đang render trong grid */
+    const thumb = work.querySelector('.work-media');
+    const r = (thumb.offsetWidth / thumb.offsetHeight) || 1;
+    mediaBox.style.setProperty('--r', r.toFixed(4));
+    inner.classList.toggle('landscape', !scrolly && r > 1.05);
+    inner.classList.toggle('portrait', !scrolly && r <= 1.05);
+    if (scrolly) inner.scrollTop = 0;
+
+    elCat.textContent   = work.querySelector('.w-cat')?.textContent || '';
+    elTitle.textContent = work.dataset.title || work.querySelector('.w-name')?.textContent || '';
+    elDesc.innerHTML = '';
+    (work.dataset.desc || DEFAULT_DESC).split(/\n+/).forEach(t => {
+      t = t.trim();
+      if (!t) return;
+      const p = document.createElement('p');
+      p.textContent = t;
+      elDesc.appendChild(p);
+    });
+
+    buildSlides(work);
+
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lb-lock');
+    const v = mediaBox.querySelector('video');
+    if (v) v.play().catch(() => {});
+  }
+
+  function close() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lb-lock');
+    stopTimer();
+    /* dừng video trong lightbox (video ở grid vẫn chạy) */
+    mediaBox.querySelectorAll('video').forEach(v => v.pause());
+    mediaBox.querySelectorAll('iframe').forEach(f => f.remove());
+  }
+
+  document.querySelectorAll('.work').forEach(work => {
+    work.addEventListener('click', e => {
+      if (work.dataset.lightbox === 'off') return; /* giữ hành vi link thường */
+      e.preventDefault();
+      open(work);
+    });
+  });
+
+  document.getElementById('lbClose').addEventListener('click', close);
+  document.getElementById('lbBackdrop').addEventListener('click', close);
+  window.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (inner.classList.contains('scrolly')) return;
+    if (e.key === 'ArrowRight' && slideEls.length > 1) { goTo(idx + 1); restartTimer(); }
+    if (e.key === 'ArrowLeft'  && slideEls.length > 1) { goTo(idx - 1); restartTimer(); }
+  });
+})();
+</script>
+
+<script>
+/* ===== Mobile menu (burger) ===== */
+(function(){
+  const burger = document.getElementById('navBurger');
+  const menu = document.getElementById('mobileMenu');
+  const backdrop = document.getElementById('mmBackdrop');
+  const closeBtn = document.getElementById('mmClose');
+  if (!burger || !menu) return;
+  function setOpen(o){
+    document.body.classList.toggle('mm-open', o);
+    burger.setAttribute('aria-expanded', o);
+    menu.setAttribute('aria-hidden', !o);
+    document.body.style.overflow = o ? 'hidden' : '';
+  }
+  burger.addEventListener('click', () => setOpen(!document.body.classList.contains('mm-open')));
+  closeBtn.addEventListener('click', () => setOpen(false));
+  backdrop.addEventListener('click', () => setOpen(false));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+})();
+</script>
+</body>
+</html>
