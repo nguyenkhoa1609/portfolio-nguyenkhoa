@@ -8,7 +8,13 @@
       "PowerShell(git config user.name)",
       "PowerShell(git config user.email \"khoadesign169@gmail.com\")",
       "PowerShell(git config user.name \"nguyenkhoa1609\")",
-      "PowerShell(git add -A)"
+      "PowerShell(git add -A)",
+      "PowerShell(git remote add origin https://github.com/nguyenkhoa1609/portfolio-nguyenkhoa.git)",
+      "PowerShell(git ls-remote --heads origin 2>&1)",
+      "PowerShell(git push -u origin main 2>&1)",
+      "PowerShell(git ls-remote --heads origin)",
+      "PowerShell(git add .)",
+      "PowerShell(git push 2>&1)"
     ]
   }
 }
