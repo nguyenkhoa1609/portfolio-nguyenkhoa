@@ -2604,9 +2604,9 @@
     const xLeft = margin;
     const xCenter = (vw - vidW) / 2;           // chặng B: nhân vật canh giữa
     const xRight = Math.max(vw - vidW - margin, xLeft);
-    const tabletAbout = vw >= 768 && vw <= 1366;
-    const x = tabletAbout
-      ? xCenter /* tablet: model đứng yên chính giữa qua cả 3 nhịp */
+    const centerModel = vw <= 1366; /* tablet + mobile: model đứng yên chính giữa qua cả 3 nhịp */
+    const x = centerModel
+      ? xCenter
       : (curS <= 1 ? lerp(xLeft, xCenter, curS) : lerp(xCenter, xRight, curS - 1));
 
     const rVid = reduced ? 1 : revA;
