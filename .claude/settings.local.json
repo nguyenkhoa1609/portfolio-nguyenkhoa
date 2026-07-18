@@ -14,7 +14,8 @@
       "PowerShell(git push -u origin main 2>&1)",
       "PowerShell(git ls-remote --heads origin)",
       "PowerShell(git add .)",
-      "PowerShell(git push 2>&1)"
+      "PowerShell(git push 2>&1)",
+      "PowerShell(git --no-pager diff --stat; Write-Output \"--- so bai social con lai ---\"; \\(Select-String -Path \"creative-portfolio.html\" -Pattern 'data-cat=\"social\"'\\).Count)"
     ]
   }
 }
