@@ -15,7 +15,19 @@
       "PowerShell(git ls-remote --heads origin)",
       "PowerShell(git add .)",
       "PowerShell(git push 2>&1)",
-      "PowerShell(git --no-pager diff --stat; Write-Output \"--- so bai social con lai ---\"; \\(Select-String -Path \"creative-portfolio.html\" -Pattern 'data-cat=\"social\"'\\).Count)"
+      "PowerShell(git --no-pager diff --stat; Write-Output \"--- so bai social con lai ---\"; \\(Select-String -Path \"creative-portfolio.html\" -Pattern 'data-cat=\"social\"'\\).Count)",
+      "PowerShell(Get-ChildItem \"works/social/post-20-bds\",\"works/social/post-24-bds\" | Select-Object @{n='Dir';e={$_.Directory.Name}}, Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}}, LastWriteTime; Write-Output \"--- git status ---\"; git status --short)",
+      "PowerShell(Get-ChildItem \"E:\\\\Cá nhân\\\\Portfolio 2026\\\\Bộ img up web\\\\Social\" -File | Where-Object { $_.Name -match '20|24' } | Select-Object Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}}, LastWriteTime)",
+      "PowerShell(Get-ChildItem \"E:\\\\Cá nhân\\\\Portfolio 2026\\\\Bộ img up web\\\\Social\" -Force | Select-Object Mode, Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}}, LastWriteTime | Sort-Object LastWriteTime -Descending | Select-Object -First 30)",
+      "PowerShell($b=\"E:\\\\Cá nhân\\\\Portfolio 2026\\\\Bộ img up web\\\\Social\"; Get-ChildItem \"$b\\\\post 20_bds\",\"$b\\\\post 24_bds\" -File | Select-Object @{n='Dir';e={$_.Directory.Name}}, Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}}, LastWriteTime)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $b=\"E:\\\\Cá nhân\\\\Portfolio 2026\\\\Bộ img up web\\\\Social\"; foreach\\($f in @\\(\"$b\\\\post 20_bds\\\\post20_final.png\",\"$b\\\\post 24_bds\\\\post24_final.png\"\\)\\){ $i=[System.Drawing.Image]::FromFile\\($f\\); \"{0}: {1} x {2}\" -f \\(Split-Path $f -Leaf\\), $i.Width, $i.Height; $i.Dispose\\(\\) }; Write-Output \"--- tools ---\"; foreach\\($t in @\\(\"cwebp\",\"magick\",\"ffmpeg\",\"python\"\\)\\){ $c=Get-Command $t -ErrorAction SilentlyContinue; if\\($c\\){\"$t : $\\($c.Source\\)\"} else {\"$t : khong co\"} })",
+      "PowerShell(python -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "PowerShell(python -c \"from PIL import Image; import glob; [print\\(f, Image.open\\(f\\).size, round\\(__import__\\('os'\\).path.getsize\\(f\\)/1024,1\\),'KB'\\) for f in ['works/social/post-20-bds/post20-final.webp','works/social/post-24-bds/post24-final.webp','works/social/post86-9proxypre/post86-final.webp']]\")",
+      "PowerShell(python \"C:\\\\Users\\\\khoad\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--C--nh-n-Portfolio-2026-Website-files-5\\\\ec805840-cc83-453e-9950-2a0758cd03ec\\\\scratchpad\\\\conv.py\")",
+      "PowerShell(py -3 -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "PowerShell(py -3 \"C:\\\\Users\\\\khoad\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--C--nh-n-Portfolio-2026-Website-files-5\\\\ec805840-cc83-453e-9950-2a0758cd03ec\\\\scratchpad\\\\conv.py\")",
+      "PowerShell(git --no-pager diff 8f48a94 -- creative-portfolio.html; Write-Output \"=== so bai social ===\"; \\(Select-String -Path \"creative-portfolio.html\" -Pattern 'data-cat=\"social\"'\\).Count)",
+      "PowerShell(py -3 -c \"from PIL import Image; [ \\(lambda im: print\\(f, im.size, im.mode, 'OK'\\)\\)\\(Image.open\\(f\\).copy\\(\\)\\) for f in ['works/social/post-20-bds/post20-final.webp','works/social/post-24-bds/post24-final.webp'] ]\")"
     ]
   }
 }
